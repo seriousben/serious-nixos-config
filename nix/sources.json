@@ -1,0 +1,26 @@
+{
+    "theme-bobthefish": {
+        "branch": "master",
+        "description": "A Powerline-style, Git-aware fish theme optimized for awesome.",
+        "homepage": "",
+        "owner": "oh-my-fish",
+        "repo": "theme-bobthefish",
+        "rev": "e3b4d4eafc23516e35f162686f08a42edf844e40",
+        "sha256": "1q4ya4ndm7d7kk8ppzvpsxmk0gkdpaqhp4n5j0mpxq7vv6yrhwvi",
+        "type": "tarball",
+        "url": "https://github.com/oh-my-fish/theme-bobthefish/archive/e3b4d4eafc23516e35f162686f08a42edf844e40.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "z": {
+        "branch": "master",
+        "description": "Pure-fish z directory jumping",
+        "homepage": "",
+        "owner": "jethrokuan",
+        "repo": "z",
+        "rev": "85f863f20f24faf675827fb00f3a4e15c7838d76",
+        "sha256": "1kaa0k9d535jnvy8vnyxd869jgs0ky6yg55ac1mxcxm8n0rh2mgq",
+        "type": "tarball",
+        "url": "https://github.com/jethrokuan/z/archive/85f863f20f24faf675827fb00f3a4e15c7838d76.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}

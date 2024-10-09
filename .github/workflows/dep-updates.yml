@@ -1,0 +1,24 @@
+name: Automated dependency updates
+on:
+  schedule:
+    # At 12:05 on day-of-month 1 and 15 and on Tuesday.
+    - cron:  '5 12 1,15 * 2'
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v14
+      - name: Update flake.lock
+        uses: DeterminateSystems/update-flake-lock@v24
+  niv-updater:
+    name: 'Create PRs for niv-managed dependencies'
+    runs-on: ubuntu-latest
+    steps:
+      # notice there is no checkout step
+      - name: niv-updater-action
+        uses: knl/niv-updater-action@v13
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
