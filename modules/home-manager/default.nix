@@ -82,12 +82,16 @@ in
   # https://wiki.nixos.org/wiki/Fish
   programs.zsh = {
     enable = true;
-    initExtra = ''
-      if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
-      then
-          exec fish -l
-      fi
-    '';
+    #
+    # FIXME: vscode cannot get environment variables with exec fish.
+    #        keeping zsh the default and changing terminal to start fish.
+    #
+    # initExtra = ''
+    #   #if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
+    #   then
+    #       exec fish -l
+    #   fi
+    # '';
   };
 
   programs.git = {
@@ -150,9 +154,10 @@ in
           RunAtLoad = false;
           KeepAlive = false;
           startInterval = 2678400; # 31 days.
-          # StartInterval = 10; # 10 seconds for testing
-          # StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.txt"; # these lines are how you debug stuff with launchd
-          # StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.txt";
+          # debugging
+          # StartInterval = 10;
+          # StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
+          # StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
         };
       };
     };
