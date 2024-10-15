@@ -28,6 +28,7 @@
     # development
     direnv
     _1password
+    postgresql
 
     # general utils
     ripgrep
@@ -111,6 +112,9 @@
       "rectangle"
       "iterm2"
       "tidal"
+
+      # docker / k8s
+      "orbstack"
     ];
   };
   services.nix-daemon.enable = true;
@@ -143,16 +147,17 @@
         LSQuarantine = false;
       };
 
+      # defaults read com.apple.screencapture
       screencapture = {
-        # TODO: garbage collect screenshots
-        # find /Users/${user}/Pictures/screenshots -type f -mtime +30 -exec rm {} \;
-        location = "/Users/${user}/Picturesscreenshots";
+        location = "/Users/${user}/Pictures/screenshots";
       };
 
+      # defaults read NSGlobalDomain
       NSGlobalDomain = {
         AppleShowAllExtensions = true;
+	NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticCapitalizationEnabled = false;
-        NSAutomaticSpellingCorrectionEnabled = false;
+        NSAutomaticPeriodSubstitutionEnabled = false;
         "com.apple.mouse.tapBehavior" = 1;
         "com.apple.trackpad.enableSecondaryClick" = true;
         ApplePressAndHoldEnabled = false;
