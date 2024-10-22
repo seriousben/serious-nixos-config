@@ -35,6 +35,9 @@
     jq
     wget
     curl
+
+    # general rust quality of life
+    rustup
   ];
 
   nix = {
@@ -100,7 +103,7 @@
       "homebrew/homebrew-bundle"
     ];
 
-    #brews = [ ];
+    brews = [ ];
     casks = [
       "1password"
       "discord"
@@ -112,6 +115,7 @@
       "rectangle"
       "iterm2"
       "tidal"
+      "slack"
 
       # docker / k8s
       "orbstack"
