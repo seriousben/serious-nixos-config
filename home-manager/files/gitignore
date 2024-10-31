@@ -119,6 +119,11 @@ cscope.out
 cscope.in.out
 cscope.po.out
 
+####
+# Python
+####
+__pycache__
+
 #####
 # Terraform
 #####
@@ -154,5 +159,6 @@ coverage.out
 #####
 # Typescript
 #####
-
+node_modules
+dist
 .log

@@ -38,6 +38,10 @@
 
     # general rust quality of life
     rustup
+
+    # node
+    nodejs_22
+    pnpm
   ];
 
   nix = {
@@ -116,6 +120,7 @@
       "iterm2"
       "tidal"
       "slack"
+      "zoom"
 
       # docker / k8s
       "orbstack"
@@ -159,7 +164,7 @@
       # defaults read NSGlobalDomain
       NSGlobalDomain = {
         AppleShowAllExtensions = true;
-	NSAutomaticSpellingCorrectionEnabled = false;
+        NSAutomaticSpellingCorrectionEnabled = false;
         NSAutomaticCapitalizationEnabled = false;
         NSAutomaticPeriodSubstitutionEnabled = false;
         "com.apple.mouse.tapBehavior" = 1;

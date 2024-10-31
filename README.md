@@ -13,6 +13,10 @@ niv update
 darwin-rebuild switch --flake
 ```
 
+## Roadmap
+
+- Use flakes instead of niv for everything
+
 ## References
 - https://github.com/nmattia/niv
 - https://nix-community.github.io/home-manager/options.xhtml

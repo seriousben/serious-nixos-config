@@ -116,10 +116,13 @@ in
       (builtins.readFile ./files/gitignore)
       "# direnv patterns"
       ".envrc.secrets"
+      "# Tensorlake specifics"
+      "indexify_local_runner_cache"
+      "indexify_storage"
     ];
     aliases = {
       up = "!git remote update -p; git merge --ff-only @{u}; git submodule update --init";
-      cleanup = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 -r git branch -d";
+      cleanup = "!git branch --merged | grep  -v '\\*\\|main\\' | xargs -n 1 -r git branch -d";
       prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
       root = "rev-parse --show-toplevel";
       # We wanna grab those pesky un-added files!
@@ -128,13 +131,13 @@ in
     };
 
     extraConfig = {
-      tag.gpgsign = true;
-      commit.gpgsign = true;
-      branch.autosetuprebase = "always";
+      user.useConfigOnly = true;
+      branch.autoSetupRebase = "always";
       core.askPass = ""; # needs to be empty to use terminal for ask pass
       credential.helper = "store"; # want to make this more secure
       github.user = "seriousben";
       push.default = "tracking";
+      push.autoSetupRemote= true;
       init.defaultBranch = "main";
 
       status = {
@@ -157,6 +160,20 @@ in
 
   programs.poetry = {
     enable = true;
+  };
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    extraConfig = "
+      set clipboard=unnamedplus
+      colorscheme dracula
+    ";
+    plugins = with pkgs; [
+      vimPlugins.dracula-nvim
+      vimPlugins.nvim-lastplace
+    ];
   };
 
   launchd = {

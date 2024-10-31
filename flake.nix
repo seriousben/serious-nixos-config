@@ -63,7 +63,7 @@
           { nixpkgs.config.allowUnfree = true; }
           nix-homebrew.darwinModules.nix-homebrew
           # https://daiderd.com/nix-darwin/manual/index.html
-          ./modules/darwin
+          ./darwin
           # https://nix-community.github.io/home-manager/options.xhtml
           home-manager.darwinModules.home-manager
           {
@@ -73,7 +73,8 @@
               extraSpecialArgs = {
                 inherit inputs;
               };
-              users.${user} = ./modules/home-manager;
+              users.${user} = ./home-manager;
+              sharedModules = [ ];
             };
           }
         ];

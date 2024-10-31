@@ -117,9 +117,6 @@ if isatty
     set -x GPG_TTY (tty)
 end
 
-# Editor
-set -gx EDITOR vim
-
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
@@ -159,4 +156,8 @@ end
 
 function op_apply
     op inject -i .envrc.secrets.tmpl -o .envrc.secrets
+end
+
+function install_debug_indexify_server
+	mv ~/src/github.com/tensorlakeai/indexify/server/target/debug/indexify-server ~/.indexify/indexify-server
 end
