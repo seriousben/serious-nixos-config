@@ -1,11 +1,13 @@
 {
   pkgs,
+  pkgs-unstable,
   inputs,
   user,
   ...
 }:
 {
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = 
+  (with pkgs; [
     vim
 
     # gnu all the things
@@ -28,7 +30,7 @@
     # development
     direnv
     _1password
-    postgresql
+    awscli
 
     # general utils
     ripgrep
@@ -36,13 +38,18 @@
     wget
     curl
 
-    # general rust quality of life
+    # rust
     rustup
 
     # node
     nodejs_22
     pnpm
-  ];
+  ])
+  ++
+  (with pkgs-unstable; [
+    postgresql_17
+    k6
+  ]);
 
   nix = {
     settings = {
@@ -107,7 +114,8 @@
       "homebrew/homebrew-bundle"
     ];
 
-    brews = [ ];
+    brews = [
+    ];
     casks = [
       "1password"
       "discord"
@@ -135,7 +143,6 @@
     pkgs.bash
     pkgs.fish
   ];
-  environment.loginShell = pkgs.fish;
 
   # Darwin User setup
   users.users.${user} = {

@@ -39,6 +39,7 @@
   outputs =
     {
       nixpkgs,
+      nixpkgs-unstable,
       home-manager,
       darwin,
       nix-homebrew,
@@ -47,6 +48,10 @@
     let
       user = "seriousben";
       system = "aarch64-darwin";
+      pkgs-unstable = import nixpkgs-unstable {
+        system = "aarch64-darwin";
+        config.allowUnfree = true;
+      };
     in
     {
       darwinConfigurations.serious-mbp = darwin.lib.darwinSystem {
@@ -56,7 +61,7 @@
           config.allowUnfree = true;
         };
         specialArgs = {
-          inherit inputs user;
+          inherit inputs user pkgs-unstable;
         };
         modules = [
           # Allow unfree packages.
