@@ -31,6 +31,8 @@
     direnv
     _1password
     awscli
+    cmake
+    ngrok
 
     # general utils
     ripgrep
@@ -49,6 +51,7 @@
   (with pkgs-unstable; [
     postgresql_17
     k6
+    terraform
   ]);
 
   nix = {

@@ -59,6 +59,14 @@ in
       ]
     );
 
+    functions = {
+      command_stress_test = {
+        body = (builtins.readFile ./files/command_stress_test.fish);
+        description = "Stress test a command by running it multiple times.";
+        # arguments
+      };
+    };
+
     # FIXME: This is needed to address bug where the $PATH is re-ordered by
     # the `path_helper` tool, prioritising Apple’s tools over the ones we’ve
     # installed with nix.

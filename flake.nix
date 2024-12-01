@@ -54,7 +54,7 @@
       };
     in
     {
-      darwinConfigurations.serious-mbp = darwin.lib.darwinSystem {
+      darwinConfigurations.seriousben-mbp = darwin.lib.darwinSystem {
         inherit system;
         pkgs = import nixpkgs {
           inherit system;
