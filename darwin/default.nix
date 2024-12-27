@@ -101,7 +101,7 @@
 
     # https://daiderd.com/nix-darwin/manual/index.html#opt-homebrew.onActivation.cleanup
     onActivation = {
-      upgrade = false;
+      upgrade = true;
       cleanup = "zap";
     };
 
@@ -129,6 +129,7 @@
       "visual-studio-code@insiders"
       "rectangle"
       "iterm2"
+      "ghostty"
       "tidal"
       "slack"
       "zoom"

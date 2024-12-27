@@ -13,6 +13,10 @@ niv update
 darwin-rebuild switch --flake
 ```
 
+### Manual changes
+
+- `touch ~/.hushlogin`: disable last login message on shell start
+
 ## Roadmap
 
 - Use flakes instead of niv for everything

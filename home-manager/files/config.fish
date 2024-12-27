@@ -111,6 +111,7 @@ set -g direnv_fish_mode eval_on_arrow
 # Vars
 #-------------------------------------------------------------------------------
 contains $HOME/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/bin
+contains $HOME/.cargo/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/.cargo/bin
 
 # Exported variables
 if isatty
