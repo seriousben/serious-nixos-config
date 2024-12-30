@@ -130,7 +130,7 @@ in
     ];
     aliases = {
       up = "!git remote update -p; git merge --ff-only @{u}; git submodule update --init";
-      cleanup = "!git branch --merged | grep  -v '\\*\\|main\\' | xargs -n 1 -r git branch -d";
+      cleanup = "!git branch --merged | grep  -v '\\*\\|main\\|develop\\|master' | xargs -n 1 -r git branch -d";
       prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
       root = "rev-parse --show-toplevel";
       # We wanna grab those pesky un-added files!
