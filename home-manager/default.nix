@@ -24,19 +24,19 @@ in
     configHome = "${config.home.homeDirectory}/.config";
   };
 
-  #programs.direnv = {
-  #  enable = true;
-  #  nix-direnv.enable = true;
-  #  stdlib = ''
-  #    # from https://github.com/direnv/direnv/issues/592
-  #    layout_poetry() {
-  #      if ! direnv_load poetry run direnv dump; then
-  #        log_error "failed to enter Poetry env, do you need 'poetry install'?"
-  #        return 2
-  #      fi
-  #    }
-  #  '';
-  #};
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    stdlib = ''
+      # from https://github.com/direnv/direnv/issues/592
+      layout_poetry() {
+        if ! direnv_load poetry run direnv dump; then
+          log_error "failed to enter Poetry env, do you need 'poetry install'?"
+          return 2
+        fi
+      }
+    '';
+  };
 
   programs.fish = {
     enable = true;

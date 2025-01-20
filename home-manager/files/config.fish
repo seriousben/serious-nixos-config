@@ -48,8 +48,8 @@ end
 # Vim: We should move this somewhere else but it works for now
 mkdir -p $HOME/.vim/{backup,swap,undo}
 
-# Add ~/.local/bin
-# set -q PATH; or set PATH ''; set -gx PATH  "$HOME/.local/bin" $PATH;
+# Add ~/.local/bin for pipx
+set -q PATH; or set PATH ''; set -gx PATH  "$HOME/.local/bin" $PATH;
 
 #-------------------------------------------------------------------------------
 # Prompt
