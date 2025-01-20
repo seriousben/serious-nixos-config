@@ -29,7 +29,7 @@
 
     # development
     direnv
-    _1password
+    _1password-cli
     awscli
     cmake
     ngrok
@@ -46,13 +46,17 @@
     # node
     nodejs_22
     pnpm
+
+    # python
+    pipx
   ])
   ++
   (with pkgs-unstable; [
     postgresql_17
     k6
     terraform
-  ]);
+  ])
+  ;
 
   nix = {
     settings = {
