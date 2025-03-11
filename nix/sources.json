@@ -17,10 +17,10 @@
         "homepage": "",
         "owner": "jethrokuan",
         "repo": "z",
-        "rev": "85f863f20f24faf675827fb00f3a4e15c7838d76",
-        "sha256": "1kaa0k9d535jnvy8vnyxd869jgs0ky6yg55ac1mxcxm8n0rh2mgq",
+        "rev": "067e867debee59aee231e789fc4631f80fa5788e",
+        "sha256": "058pmqvqx4gngpp1yd0c1n904l456fqdawdawr4bgwddr97a6sbs",
         "type": "tarball",
-        "url": "https://github.com/jethrokuan/z/archive/85f863f20f24faf675827fb00f3a4e15c7838d76.tar.gz",
+        "url": "https://github.com/jethrokuan/z/archive/067e867debee59aee231e789fc4631f80fa5788e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

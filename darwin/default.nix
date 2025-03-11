@@ -59,33 +59,34 @@
   ;
 
   nix = {
-    settings = {
-      trusted-users = [
-        "root"
-        user
-      ];
-      experimental-features = "nix-command flakes";
-      substituters = [ ];
-      trusted-public-keys = [ ];
-      keep-outputs = true;
-      keep-derivations = true;
-    };
-
-    gc = {
-      user = "root";
-      automatic = true;
-      interval = {
-        Weekday = 0;
-        Hour = 2;
-        Minute = 0;
-      };
-      options = "--delete-older-than 30d";
-    };
-
-    # Turn this on to make command line easier
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+    enable = false;
+    #settings = {
+      #trusted-users = [
+        #"root"
+        #user
+      #];
+      #experimental-features = "nix-command flakes";
+      #substituters = [ ];
+      #trusted-public-keys = [ ];
+      #keep-outputs = true;
+      #keep-derivations = true;
+    #};
+#
+    #gc = {
+      #user = "root";
+      #automatic = true;
+      #interval = {
+        #Weekday = 0;
+        #Hour = 2;
+        #Minute = 0;
+      #};
+      #options = "--delete-older-than 30d";
+    #};
+#
+    ## Turn this on to make command line easier
+    #extraOptions = ''
+      #experimental-features = nix-command flakes
+    #'';
   };
 
   # homebrew
@@ -142,7 +143,7 @@
       "orbstack"
     ];
   };
-  services.nix-daemon.enable = true;
+  #services.nix-daemon.enable = true;
 
   programs.zsh.enable = true;
   programs.fish.enable = true;
