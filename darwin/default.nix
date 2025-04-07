@@ -30,7 +30,7 @@
     # development
     direnv
     _1password-cli
-    awscli
+    awscli2
     cmake
     ngrok
 
