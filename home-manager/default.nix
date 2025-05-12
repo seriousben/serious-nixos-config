@@ -24,6 +24,14 @@ in
     configHome = "${config.home.homeDirectory}/.config";
   };
 
+  # Instead, manually create the config file
+  xdg.configFile."ghostty/config" = {
+    text = ''
+      command = /etc/profiles/per-user/seriousben/bin/fish
+      theme = catppuccin-frappe
+    '';
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -145,7 +153,7 @@ in
       credential.helper = "store"; # want to make this more secure
       github.user = "seriousben";
       push.default = "tracking";
-      push.autoSetupRemote= true;
+      push.autoSetupRemote = true;
       init.defaultBranch = "main";
 
       status = {
