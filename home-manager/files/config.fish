@@ -3,7 +3,7 @@
 #-------------------------------------------------------------------------------
 function __ssh_agent_is_started -d "check if ssh agent is already started"
     if begin
-            test -f $SSH_ENV; and test -z "$SSH_AGENT_PID"
+        test -f $SSH_ENV; and test -z "$SSH_AGENT_PID"
         end
         source $SSH_ENV >/dev/null
     end
@@ -47,9 +47,6 @@ end
 #-------------------------------------------------------------------------------
 # Vim: We should move this somewhere else but it works for now
 mkdir -p $HOME/.vim/{backup,swap,undo}
-
-# Add ~/.local/bin for pipx
-set -q PATH; or set PATH ''; set -gx PATH  "$HOME/.local/bin" $PATH;
 
 #-------------------------------------------------------------------------------
 # Prompt
@@ -111,7 +108,10 @@ set -g direnv_fish_mode eval_on_arrow
 # Vars
 #-------------------------------------------------------------------------------
 contains $HOME/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/bin
+contains $HOME/go/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/go/bin
 contains $HOME/.cargo/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/.cargo/bin
+# Add ~/.local/bin for pipx
+contains $HOME/.local/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/.local/bin
 
 # Exported variables
 if isatty
@@ -123,42 +123,52 @@ end
 #-------------------------------------------------------------------------------
 function update_repo
     set -l repo $argv[1]
+
+    # Check if we're in a git repository
+    if not git rev-parse --is-inside-work-tree >/dev/null 2>&1
+        echo "$repo is not a git repository"
+        return 1
+    end
+
+    # Check for changes
     git diff --quiet 2>/dev/null
     set -l diffStatus $status
 
+    # Get current branch
     set -l ref (command git symbolic-ref HEAD 2>/dev/null)
-    and begin
-        [ "$ref" = refs/heads/master -o "$ref" = refs/heads/main ]
-        and [ $diffStatus -eq 0 ]
-        and begin
+    set -l branch (string replace "refs/heads/" "" "$ref")
+
+    # Update if we're on main/master branch with no changes
+    if test "$branch" = "master" -o "$branch" = "main"
+        if test $diffStatus -eq 0
             set -l out (command git up 2>&1)
-            and begin
+            if test $status -eq 0
                 echo "Updated $repo"
+            else
+                echo "ERROR updating $repo:"
+                echo ">>>>>>>"
+                echo "$out"
+                echo "<<<<<<<<<<"
             end
-            or echo "ERROR updating $repo:\n>>>>>>>\n$out\n<<<<<<<<<<\n"
+        else
+            set -l changes (command git diff --shortstat 2>/dev/null)
+            echo "$repo NOT UPDATED, has changes: $changes"
         end
-    end
-    or begin
-        begin
-            [ "$ref" != refs/heads/master -a "$ref" != refs/heads/main ]
-            and echo "$repo NOT UPDATED, uses $ref"
-        end
-        or begin
-            not [ $diffStatus -eq 0 ]
-            and set -l changes (command git diff --shortstat 2>/dev/null)
-            and echo "$repo NOT UPDATED, has changes: $changes"
-        end
+    else
+        echo "$repo NOT UPDATED, on branch: $branch"
     end
 end
 
 function update_repos
-    find . -maxdepth 1 -type d | xargs -n 1 -P 10 fish -c 'cd "$argv" && update_repo "$argv"'
+    for dir in (find . -maxdepth 1 -type d)
+        if test -d "$dir/.git"
+            pushd "$dir"
+            update_repo (basename "$dir")
+            prevd
+        end
+    end
 end
 
 function op_apply
     op inject -i .envrc.secrets.tmpl -o .envrc.secrets
-end
-
-function install_debug_indexify_server
-	mv ~/src/github.com/tensorlakeai/indexify/server/target/debug/indexify-server ~/.indexify/indexify-server
 end

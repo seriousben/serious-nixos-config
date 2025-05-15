@@ -141,6 +141,8 @@
       "slack"
       "zoom"
 
+      "granola"
+
       # Work
       "linear-linear"
 

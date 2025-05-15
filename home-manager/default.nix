@@ -73,6 +73,10 @@ in
         description = "Stress test a command by running it multiple times.";
         # arguments
       };
+      mage = {
+      	body = "go run mage.go";
+	description = "Run go mage tooling";
+      };
     };
 
     # FIXME: This is needed to address bug where the $PATH is re-ordered by
