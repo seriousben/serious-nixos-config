@@ -121,41 +121,52 @@ end
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
-function update_repo
+#function update_repo
     set -l repo $argv[1]
-
+    
     # Check if we're in a git repository
     if not git rev-parse --is-inside-work-tree >/dev/null 2>&1
-        echo "$repo is not a git repository"
-        return 1
+        echo "⚠️ $repo is not a git repository"
+        return
     end
-
+    
     # Check for changes
     git diff --quiet 2>/dev/null
     set -l diffStatus $status
-
+    
     # Get current branch
     set -l ref (command git symbolic-ref HEAD 2>/dev/null)
     set -l branch (string replace "refs/heads/" "" "$ref")
-
+    
     # Update if we're on main/master branch with no changes
     if test "$branch" = "master" -o "$branch" = "main"
         if test $diffStatus -eq 0
+            # Store current commit hash before pulling
+            set -l before_hash (git rev-parse HEAD)
             set -l out (command git up 2>&1)
+            
             if test $status -eq 0
-                echo "Updated $repo"
+                # Store commit hash after pulling
+                set -l after_hash (git rev-parse HEAD)
+                
+                # Compare hashes to see if there were updates
+                if test "$before_hash" = "$after_hash"
+                    echo "🔵 $repo is already up to date"
+                else
+                    echo "🟢 Updated $repo"
+                end
             else
-                echo "ERROR updating $repo:"
+                echo "🔴 ERROR updating $repo:"
                 echo ">>>>>>>"
                 echo "$out"
                 echo "<<<<<<<<<<"
             end
         else
             set -l changes (command git diff --shortstat 2>/dev/null)
-            echo "$repo NOT UPDATED, has changes: $changes"
+            echo "🟠 $repo NOT UPDATED, has changes: $changes"
         end
     else
-        echo "$repo NOT UPDATED, on branch: $branch"
+        echo "🟣 $repo NOT UPDATED, on branch: $branch"
     end
 end
 
