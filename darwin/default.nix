@@ -59,6 +59,9 @@
 
       # go
       go_1_24
+
+      # AI
+      claude-code
     ]);
 
   nix = {
@@ -140,6 +143,9 @@
       "tidal"
       "slack"
       "zoom"
+
+      # LLM
+      "claude"
 
       "granola"
 

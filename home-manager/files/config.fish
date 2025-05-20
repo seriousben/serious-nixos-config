@@ -121,15 +121,15 @@ end
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
-#function update_repo
+function update_repo
     set -l repo $argv[1]
-    
+
     # Check if we're in a git repository
     if not git rev-parse --is-inside-work-tree >/dev/null 2>&1
         echo "⚠️ $repo is not a git repository"
         return
     end
-    
+
     # Check for changes
     git diff --quiet 2>/dev/null
     set -l diffStatus $status
@@ -137,10 +137,16 @@ end
     # Get current branch
     set -l ref (command git symbolic-ref HEAD 2>/dev/null)
     set -l branch (string replace "refs/heads/" "" "$ref")
-    
+
     # Update if we're on main/master branch with no changes
     if test "$branch" = "master" -o "$branch" = "main"
         if test $diffStatus -eq 0
+            # Check if repository has any commits
+            if not git rev-parse --quiet HEAD >/dev/null 2>&1
+                echo "🟡 $repo has no commits yet, nothing to update"
+                return
+            end
+
             # Store current commit hash before pulling
             set -l before_hash (git rev-parse HEAD)
             set -l out (command git up 2>&1)
