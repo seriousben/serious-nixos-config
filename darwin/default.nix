@@ -39,6 +39,7 @@
       jq
       wget
       curl
+      yq-go
 
       # rust
       rustup
@@ -148,6 +149,7 @@
       "claude"
 
       "granola"
+      "loom"
 
       # Work
       "linear-linear"
@@ -176,13 +178,18 @@
   };
 
   fonts = {
-    packages = [ (pkgs.nerdfonts.override { fonts = [ "InconsolataGo" ]; }) ];
+    packages = [
+      pkgs.nerd-fonts.inconsolata-go
+    ];
   };
 
   # TODO: Disable finder tags, configure favorite folders.
   system = {
     # Sets the state version for the Nix Darwin configuration
     stateVersion = 4;
+
+    # Sets the primary user for the system
+    primaryUser = user;
 
     # System startup settings
     startup = {
@@ -278,10 +285,10 @@
         };
 
         # Control Center settings (using ByHost preferences)
-        "~/Library/Preferences/ByHost/com.apple.controlcenter" = {
-          # Shows battery percentage in the menu bar
-          BatteryShowPercentage = true;
-        };
+        # "~/Library/Preferences/ByHost/com.apple.controlcenter" = {
+        #   # Shows battery percentage in the menu bar
+        #   BatteryShowPercentage = true;
+        # };
 
         # Privacy settings
         "com.apple.AdLib" = {

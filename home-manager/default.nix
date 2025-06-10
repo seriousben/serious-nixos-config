@@ -29,6 +29,8 @@ in
     text = ''
       command = /etc/profiles/per-user/seriousben/bin/fish
       theme = catppuccin-frappe
+      # keybind = alt+v=esc:v
+      macos-option-as-alt = true
     '';
   };
 
@@ -73,10 +75,10 @@ in
         description = "Stress test a command by running it multiple times.";
         # arguments
       };
-      mage = {
-      	body = "go run mage.go";
-	description = "Run go mage tooling";
-      };
+    };
+
+    shellAliases = {
+      mage = "go run mage.go --";
     };
 
     # FIXME: This is needed to address bug where the $PATH is re-ordered by

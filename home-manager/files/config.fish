@@ -107,6 +107,8 @@ set -g direnv_fish_mode eval_on_arrow
 #-------------------------------------------------------------------------------
 # Vars
 #-------------------------------------------------------------------------------
+set -x GOPRIVATE github.com/keycardlabs
+
 contains $HOME/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/bin
 contains $HOME/go/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/go/bin
 contains $HOME/.cargo/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/.cargo/bin
@@ -133,7 +135,7 @@ function update_repo
     # Check for changes
     git diff --quiet 2>/dev/null
     set -l diffStatus $status
-    
+
     # Get current branch
     set -l ref (command git symbolic-ref HEAD 2>/dev/null)
     set -l branch (string replace "refs/heads/" "" "$ref")
@@ -150,11 +152,11 @@ function update_repo
             # Store current commit hash before pulling
             set -l before_hash (git rev-parse HEAD)
             set -l out (command git up 2>&1)
-            
+
             if test $status -eq 0
                 # Store commit hash after pulling
                 set -l after_hash (git rev-parse HEAD)
-                
+
                 # Compare hashes to see if there were updates
                 if test "$before_hash" = "$after_hash"
                     echo "🔵 $repo is already up to date"
@@ -188,4 +190,8 @@ end
 
 function op_apply
     op inject -i .envrc.secrets.tmpl -o .envrc.secrets
+end
+
+function update_claude_ext
+    env NIXPKGS_ALLOW_UNFREE=1 nix path-info --impure github:NixOS/nixpkgs/nixpkgs-unstable#claude-code
 end
