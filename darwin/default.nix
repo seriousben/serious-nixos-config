@@ -41,6 +41,7 @@
       curl
       yq-go
       envsubst
+      mysides
 
       # rust
       rustup
@@ -176,6 +177,23 @@
     home = "/Users/${user}";
     isHidden = false;
   };
+
+  # System activation scripts
+  system.activationScripts.postActivation.text = ''
+    # Configure sidebar items using mysides
+    echo "Configuring Finder sidebar..."
+
+    # Add common folders to sidebar
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Home" "file:///Users/${user}/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Downloads" "file:///Users/${user}/Downloads/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Documents" "file:///Users/${user}/Documents/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Screenshots" "file:///Users/${user}/Pictures/screenshots/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Keycard" "file:///Users/${user}/src/keycard/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "SeriousBen" "file:///Users/${user}/src/seriousben/" || true
+    /usr/bin/sudo -u "${user}" ${pkgs.mysides}/bin/mysides add "Applications" "file:///Applications/" || true
+
+    echo "Finder sidebar configuration complete"
+  '';
 
   fonts = {
     packages = [
