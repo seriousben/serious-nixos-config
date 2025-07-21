@@ -40,6 +40,7 @@
       wget
       curl
       yq-go
+      envsubst
 
       # rust
       rustup
@@ -60,9 +61,6 @@
 
       # go
       go_1_24
-
-      # AI
-      claude-code
     ]);
 
   nix = {
@@ -147,6 +145,7 @@
 
       # LLM
       "claude"
+      "claude-code"
 
       "granola"
       "loom"
@@ -162,6 +161,7 @@
     ];
   };
   #services.nix-daemon.enable = true;
+
 
   programs.zsh.enable = true;
   programs.fish.enable = true;
