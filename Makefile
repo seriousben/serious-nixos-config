@@ -1,6 +1,6 @@
 .PHONY: apply
 apply:
-	darwin-rebuild switch --flake .
+	sudo $$(which darwin-rebuild) switch --flake .
 
 .PHONY: update
 update:
