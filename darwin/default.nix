@@ -129,6 +129,7 @@
     ];
 
     brews = [
+      "gh"
     ];
     casks = [
       "1password"

@@ -34,6 +34,16 @@ in
     '';
   };
 
+  # CLAUDE.md configuration in ~/.claude/
+  home.file.".claude/CLAUDE.md" = {
+    text = builtins.readFile ./files/AGENT.md;
+  };
+
+  # AGENT.md configuration in ~/.config/
+  xdg.configFile."AGENT.md" = {
+    text = builtins.readFile ./files/AGENT.md;
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
