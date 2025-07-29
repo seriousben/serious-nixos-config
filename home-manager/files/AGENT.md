@@ -150,6 +150,10 @@ You're doing well when:
 3. **Follow existing patterns** - Consistency trumps personal preference
 4. **Think like a maintainer** - Will this be easy to debug in 6 months?
 
+## System Description
+
+- Use gnu utilities instead of bsd utilities
+- rg is installed for searching
 ---
 
 *"The greatest limitation in writing software is our ability to understand the systems we are creating."* - John Ousterhout
