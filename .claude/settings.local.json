@@ -1,8 +1,13 @@
 {
-  "enableAllProjectMcpServers": false,
   "permissions": {
     "allow": [
-      "Bash(nix flake check:*)"
+      "Bash(nix flake check:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(launchctl:*)",
+      "Bash(mkdir:*)",
+      "Bash(./scripts/organize-downloads.sh:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": false
 }

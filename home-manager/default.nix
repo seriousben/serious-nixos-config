@@ -211,20 +211,43 @@ in
   launchd = {
     enable = true;
     agents = {
-      # Delete screenshots older than 30 days.
+      # Delete screenshots older than 30 days using our custom script.
       gc_screenshots = {
         enable = true;
         config = {
-          Program = "${pkgs.findutils}/bin/find";
-          # TODO: replace splitString by a function that knows about shell quoting.
-          ProgramArguments = lib.strings.splitString " " "${pkgs.findutils}/bin/find ${config.home.homeDirectory}/Pictures/screenshots -type f -name *.png -mtime +30 -delete";
+          Program = "${pkgs.bash}/bin/bash";
+          ProgramArguments = [
+            "${pkgs.bash}/bin/bash"
+            "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts/cleanup-screenshots.sh"
+            "--verbose"
+          ];
           RunAtLoad = false;
           KeepAlive = false;
           startInterval = 2678400; # 31 days.
           # debugging
           # StartInterval = 10;
-          # StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
-          # StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
+          StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
+          StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
+        };
+      };
+
+      # Organize downloads into monthly folders.
+      organize_downloads = {
+        enable = true;
+        config = {
+          Program = "${pkgs.bash}/bin/bash";
+          ProgramArguments = [
+            "${pkgs.bash}/bin/bash"
+            "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts/organize-downloads.sh"
+            "--verbose"
+          ];
+          RunAtLoad = false;
+          KeepAlive = false;
+          startInterval = 604800; # 7 days (weekly).
+          # debugging
+          # StartInterval = 10;
+          StandardErrorPath = "${config.home.homeDirectory}/organize_downloads-stderr.log";
+          StandardOutPath = "${config.home.homeDirectory}/organize_downloads-stdout.log";
         };
       };
     };
