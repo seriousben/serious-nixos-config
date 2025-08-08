@@ -201,6 +201,15 @@ in
     extraConfig = "
       set clipboard=unnamedplus
       colorscheme dracula
+
+      \" Highlight trailing whitespace
+      set list
+      set listchars=trail:·,tab:→-,extends:>,precedes:<
+      highlight SpecialKey ctermfg=red guifg=#FF0000 ctermbg=red guibg=#FF4444
+      highlight Whitespace ctermfg=red guifg=#FF0000 ctermbg=red guibg=#FF4444
+
+      \" Auto-remove trailing whitespace on save
+      autocmd BufWritePre * :%s/\\s\\+$//e
     ";
     plugins = with pkgs; [
       vimPlugins.dracula-nvim
