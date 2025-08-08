@@ -4,9 +4,7 @@
       "Bash(nix flake check:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
-      "Bash(launchctl:*)",
       "Bash(mkdir:*)",
-      "Bash(./scripts/organize-downloads.sh:*)"
     ]
   },
   "enableAllProjectMcpServers": false

@@ -44,6 +44,29 @@ in
     text = builtins.readFile ./files/AGENT.md;
   };
 
+  # Claude Code system-level settings
+  home.file.".claude/settings.json" = {
+    text = builtins.toJSON {
+      permissions = {
+        allow = [
+          "Bash(ls*)"
+          "Bash(find*)"
+          "Bash(mkdir*)"
+          "Bash(go run mage.go*)"
+          "Bash(npm test*)"
+          "Bash(npm test)"
+          "Bash(npm run build*)"
+          "Bash(npm run format*)"
+          "Bash(npm run lint*)"
+          "Bash(gh run list*)"
+          "Bash(gh run view*)"
+          "Bash(rg*)"
+        ];
+        deny = [];
+      };
+    };
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -203,10 +226,8 @@ in
       colorscheme dracula
 
       \" Highlight trailing whitespace
-      set list
-      set listchars=trail:·,tab:→-,extends:>,precedes:<
-      highlight SpecialKey ctermfg=red guifg=#FF0000 ctermbg=red guibg=#FF4444
-      highlight Whitespace ctermfg=red guifg=#FF0000 ctermbg=red guibg=#FF4444
+      highlight ExtraWhitespace ctermbg=red guibg=#FF4444
+      match ExtraWhitespace /\\s\\+$/
 
       \" Auto-remove trailing whitespace on save
       autocmd BufWritePre * :%s/\\s\\+$//e
