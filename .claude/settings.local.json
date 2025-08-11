@@ -4,7 +4,7 @@
       "Bash(nix flake check:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
-      "Bash(mkdir:*)",
+      "Bash(mkdir:*)"
     ]
   },
   "enableAllProjectMcpServers": false
