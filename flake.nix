@@ -34,6 +34,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    tilt-dev-tap = {
+      url = "github:tilt-dev/homebrew-tap";
+      flake = false;
+    };
   };
 
   outputs =

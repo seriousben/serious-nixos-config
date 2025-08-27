@@ -103,6 +103,7 @@
       "homebrew/homebrew-core" = inputs.homebrew-core;
       "homebrew/homebrew-cask" = inputs.homebrew-cask;
       "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
+      "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
     };
     mutableTaps = false;
     autoMigrate = true;
@@ -126,10 +127,14 @@
       "homebrew/homebrew-core"
       "homebrew/homebrew-cask"
       "homebrew/homebrew-bundle"
+      "tilt-dev/homebrew-tap"
     ];
 
     brews = [
       "gh"
+      "k3d"
+      "tilt-dev/tap/tilt"
+      "kubernetes-cli"
     ];
     casks = [
       "1password"
@@ -139,6 +144,7 @@
       "monodraw"
       "alfred"
       "visual-studio-code@insiders"
+      "cursor"
       "rectangle"
       "ghostty"
       "tidal"
@@ -149,10 +155,9 @@
       "claude"
       "claude-code"
 
+      # Work
       "granola"
       "loom"
-
-      # Work
       "linear-linear"
 
       # shure mic

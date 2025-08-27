@@ -166,7 +166,24 @@
         "homebrew-core": "homebrew-core",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "tilt-dev-tap": "tilt-dev-tap"
+      }
+    },
+    "tilt-dev-tap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749826189,
+        "narHash": "sha256-veYEyQsy92fIWBNZKpuOSE5wiUYRYpnbYsdejgQAFgA=",
+        "owner": "tilt-dev",
+        "repo": "homebrew-tap",
+        "rev": "2543d256c3a186353ddb7af15e916d1acf3dabb2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tilt-dev",
+        "repo": "homebrew-tap",
+        "type": "github"
       }
     }
   },
