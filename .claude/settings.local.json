@@ -4,7 +4,10 @@
       "Bash(nix flake check:*)",
       "Bash(ls:*)",
       "Bash(find:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.anthropic.com)"
     ]
   },
   "enableAllProjectMcpServers": false

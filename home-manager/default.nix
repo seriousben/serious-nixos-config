@@ -44,6 +44,19 @@ in
     text = builtins.readFile ./files/AGENT.md;
   };
 
+  # Claude Code sub-agents
+  home.file.".claude/agents/architectural-reviewer.md" = {
+    text = builtins.readFile ./files/agents/architectural-reviewer.md;
+  };
+
+  home.file.".claude/agents/security-focused-reviewer.md" = {
+    text = builtins.readFile ./files/agents/security-focused-reviewer.md;
+  };
+
+  home.file.".claude/agents/claude-md-curator.md" = {
+    text = builtins.readFile ./files/agents/claude-md-curator.md;
+  };
+
   # Claude Code system-level settings
   home.file.".claude/settings.json" = {
     text = builtins.toJSON {
