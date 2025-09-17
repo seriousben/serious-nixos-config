@@ -2,11 +2,9 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
-let
-  sources = import ../nix/sources.nix;
-in
 {
   home = {
     enableNixpkgsReleaseCheck = false;
@@ -97,16 +95,16 @@ in
   programs.fish = {
     enable = true;
     # https://github.com/NixOS/nixpkgs/tree/7eee17a8a5868ecf596bbb8c8beb527253ea8f4d/pkgs/shells/fish/plugins
-    plugins =
-      map
-        (n: {
-          name = n;
-          src = sources.${n};
-        })
-        [
-          "z"
-          "theme-bobthefish"
-        ];
+    plugins = [
+      {
+        name = "z";
+        src = inputs.fish-z;
+      }
+      {
+        name = "theme-bobthefish";
+        src = inputs.theme-bobthefish;
+      }
+    ];
 
     interactiveShellInit = lib.strings.concatStrings (
       lib.strings.intersperse "\n" [
@@ -267,8 +265,6 @@ in
           RunAtLoad = false;
           KeepAlive = false;
           startInterval = 2678400; # 31 days.
-          # debugging
-          # StartInterval = 10;
           StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
         };
@@ -287,8 +283,6 @@ in
           RunAtLoad = false;
           KeepAlive = false;
           startInterval = 604800; # 7 days (weekly).
-          # debugging
-          # StartInterval = 10;
           StandardErrorPath = "${config.home.homeDirectory}/organize_downloads-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/organize_downloads-stdout.log";
         };

@@ -38,6 +38,22 @@
         "type": "github"
       }
     },
+    "fish-z": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739459792,
+        "narHash": "sha256-emmjTsqt8bdI5qpx1bAzhVACkg0MNB/uffaRjjeuFxU=",
+        "owner": "jethrokuan",
+        "repo": "z",
+        "rev": "067e867debee59aee231e789fc4631f80fa5788e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jethrokuan",
+        "repo": "z",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -160,6 +176,7 @@
     "root": {
       "inputs": {
         "darwin": "darwin",
+        "fish-z": "fish-z",
         "home-manager": "home-manager",
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
@@ -167,7 +184,24 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "theme-bobthefish": "theme-bobthefish",
         "tilt-dev-tap": "tilt-dev-tap"
+      }
+    },
+    "theme-bobthefish": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1727184317,
+        "narHash": "sha256-cXOYvdn74H4rkMWSC7G6bT4wa9d3/3vRnKed2ixRnuA=",
+        "owner": "oh-my-fish",
+        "repo": "theme-bobthefish",
+        "rev": "e3b4d4eafc23516e35f162686f08a42edf844e40",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oh-my-fish",
+        "repo": "theme-bobthefish",
+        "type": "github"
       }
     },
     "tilt-dev-tap": {

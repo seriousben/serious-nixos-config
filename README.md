@@ -5,7 +5,6 @@
 ### Update dependencies
 ```
 nix flake update
-niv update
 ```
 
 ### Apply changes
@@ -19,10 +18,11 @@ darwin-rebuild switch --flake
 
 ## Roadmap
 
-- Use flakes instead of niv for everything
+- ✅ Use flakes instead of niv for everything
+- Split large darwin/default.nix system defaults into logical modules
+- Optimize fish shell path management with nix-darwin built-ins
 
 ## References
-- https://github.com/nmattia/niv
 - https://nix-community.github.io/home-manager/options.xhtml
 - https://daiderd.com/nix-darwin/manual/index.html
 - https://direnv.net/man/direnv-stdlib.1.html

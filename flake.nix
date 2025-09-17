@@ -38,6 +38,16 @@
       url = "github:tilt-dev/homebrew-tap";
       flake = false;
     };
+
+    # Fish shell plugins
+    theme-bobthefish = {
+      url = "github:oh-my-fish/theme-bobthefish";
+      flake = false;
+    };
+    fish-z = {
+      url = "github:jethrokuan/z";
+      flake = false;
+    };
   };
 
   outputs =
@@ -68,8 +78,6 @@
           inherit inputs user pkgs-unstable;
         };
         modules = [
-          # Allow unfree packages.
-          { nixpkgs.config.allowUnfree = true; }
           nix-homebrew.darwinModules.nix-homebrew
           # https://daiderd.com/nix-darwin/manual/index.html
           ./darwin
