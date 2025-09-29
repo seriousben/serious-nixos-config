@@ -5,7 +5,6 @@ apply:
 .PHONY: update
 update:
 	nix flake update
-	niv update
 
 .PHONY: changelog
 changelog:
