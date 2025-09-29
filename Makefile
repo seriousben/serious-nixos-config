@@ -1,6 +1,6 @@
 .PHONY: apply
 apply:
-	sudo $$(which darwin-rebuild) switch --flake .
+	sudo $$(which darwin-rebuild) switch --flake .#seriousben-mbp
 
 .PHONY: update
 update:
