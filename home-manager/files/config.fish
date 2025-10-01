@@ -109,6 +109,11 @@ set -g direnv_fish_mode eval_on_arrow
 #-------------------------------------------------------------------------------
 set -x GOPRIVATE github.com/keycardlabs
 
+# NODE_EXTRA_CA_CERTS: Use CA bundle if it exists
+if test -f $HOME/.config/certs/ca-bundle.pem
+    set -x NODE_EXTRA_CA_CERTS $HOME/.config/certs/ca-bundle.pem
+end
+
 contains $HOME/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/bin
 contains $HOME/go/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/go/bin
 contains $HOME/.cargo/bin $fish_user_paths; or set -Ua fish_user_paths $HOME/.cargo/bin
