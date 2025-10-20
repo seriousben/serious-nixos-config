@@ -7,7 +7,9 @@
       "Bash(mkdir:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Read(//Users/seriousben/.claude/agents/**)",
+      "Read(//nix/store/**)"
     ]
   },
   "enableAllProjectMcpServers": false

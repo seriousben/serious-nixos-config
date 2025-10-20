@@ -60,18 +60,18 @@
     text = builtins.toJSON {
       permissions = {
         allow = [
-          "Bash(ls*)"
-          "Bash(find*)"
-          "Bash(mkdir*)"
-          "Bash(go run mage.go*)"
-          "Bash(npm test*)"
+          "Bash(ls:*)"
+          "Bash(find:*)"
+          "Bash(mkdir:*)"
+          "Bash(go run mage.go:*)"
+          "Bash(npm test:*)"
           "Bash(npm test)"
-          "Bash(npm run build*)"
-          "Bash(npm run format*)"
-          "Bash(npm run lint*)"
-          "Bash(gh run list*)"
-          "Bash(gh run view*)"
-          "Bash(rg*)"
+          "Bash(npm run build:*)"
+          "Bash(npm run format:*)"
+          "Bash(npm run lint:*)"
+          "Bash(gh run list:*)"
+          "Bash(gh run view:*)"
+          "Bash(rg:*)"
         ];
         deny = [];
       };
