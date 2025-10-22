@@ -76,6 +76,7 @@
       "homebrew/homebrew-cask" = inputs.homebrew-cask;
       "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
       "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
+      "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
     };
     mutableTaps = false;
     autoMigrate = true;
@@ -103,6 +104,7 @@
       "tilt-dev/tap/tilt"
       "kubernetes-cli"
       "pulumi"
+      "seriousben/tiltbar/tiltbar"
     ];
     casks = [
       "1password"

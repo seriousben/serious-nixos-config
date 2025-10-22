@@ -38,6 +38,10 @@
       url = "github:tilt-dev/homebrew-tap";
       flake = false;
     };
+    tiltbar-tap = {
+      url = "github:seriousben/homebrew-tiltbar";
+      flake = false;
+    };
 
     # Fish shell plugins
     theme-bobthefish = {
