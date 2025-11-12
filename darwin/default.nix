@@ -130,8 +130,9 @@
       "loom"
       "linear-linear"
 
-      # shure mic
+      # office setup
       "shureplus-motiv"
+      "elgato-control-center"
 
       # docker / k8s
       "orbstack"
