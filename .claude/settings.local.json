@@ -9,7 +9,12 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "Read(//Users/seriousben/.claude/agents/**)",
-      "Read(//nix/store/**)"
+      "Read(//nix/store/**)",
+      "WebFetch(domain:mynixos.com)",
+      "Bash(nix log:*)",
+      "WebFetch(domain:daiderd.com)",
+      "WebSearch",
+      "Bash(mkcert:*)"
     ]
   },
   "enableAllProjectMcpServers": false
