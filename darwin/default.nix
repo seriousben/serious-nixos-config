@@ -31,7 +31,7 @@
       _1password-cli
       awscli2
       cmake
-      ngrok
+      # ngrok
 
       # general utils
       ripgrep
