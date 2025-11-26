@@ -26,7 +26,7 @@
   xdg.configFile."ghostty/config" = {
     text = ''
       command = /etc/profiles/per-user/seriousben/bin/fish
-      theme = catppuccin-frappe
+      theme = Catppuccin Frappe
       # keybind = alt+v=esc:v
       macos-option-as-alt = true
     '';
