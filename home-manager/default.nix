@@ -249,6 +249,25 @@
     ];
   };
 
+  # psql configuration - fish-like history and better data display
+  home.file.".psqlrc" = {
+    text = ''
+      -- History settings (fish-like: no duplicates)
+      \set HISTCONTROL ignoredups
+
+      -- Auto-timing
+      \timing on
+
+      -- Better output formatting for data display
+      \pset null '∅'
+      \pset linestyle unicode
+      \pset border 2
+
+      -- Better paging with horizontal scrolling for wide tables
+      \setenv PAGER 'less -S'
+    '';
+  };
+
   launchd = {
     enable = true;
     agents = {
