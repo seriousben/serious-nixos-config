@@ -14,7 +14,8 @@
       "Bash(nix log:*)",
       "WebFetch(domain:daiderd.com)",
       "WebSearch",
-      "Bash(mkcert:*)"
+      "Bash(mkcert:*)",
+      "WebFetch(domain:agents.md)"
     ]
   },
   "enableAllProjectMcpServers": false

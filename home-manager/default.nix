@@ -32,14 +32,14 @@
     '';
   };
 
-  # CLAUDE.md configuration in ~/.claude/
+  # Claude Code configuration - uses CLAUDE.md naming
   home.file.".claude/CLAUDE.md" = {
-    text = builtins.readFile ./files/AGENT.md;
+    text = builtins.readFile ./files/AGENTS.md;
   };
 
-  # AGENT.md configuration in ~/.config/
-  xdg.configFile."AGENT.md" = {
-    text = builtins.readFile ./files/AGENT.md;
+  # agents.md standard - for generic AI coding agents
+  xdg.configFile."agents/AGENTS.md" = {
+    text = builtins.readFile ./files/AGENTS.md;
   };
 
   # Claude Code sub-agents
