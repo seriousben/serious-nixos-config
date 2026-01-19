@@ -15,7 +15,9 @@
       "WebFetch(domain:daiderd.com)",
       "WebSearch",
       "Bash(mkcert:*)",
-      "WebFetch(domain:agents.md)"
+      "WebFetch(domain:agents.md)",
+      "Bash(readlink:*)",
+      "Bash(cat:*)"
     ]
   },
   "enableAllProjectMcpServers": false
