@@ -17,7 +17,13 @@
       "Bash(mkcert:*)",
       "WebFetch(domain:agents.md)",
       "Bash(readlink:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:freerangecloud.com)",
+      "Bash(gh repo view:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:jvns.ca)",
+      "Bash(gh search:*)",
+      "Bash(gh gist list:*)"
     ]
   },
   "enableAllProjectMcpServers": false

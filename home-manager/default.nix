@@ -5,6 +5,9 @@
   inputs,
   ...
 }:
+let
+  repoPath = "${config.home.homeDirectory}/src/seriousben/serious-nixos-config";
+in
 {
   home = {
     enableNixpkgsReleaseCheck = false;
@@ -34,48 +37,30 @@
 
   # Claude Code configuration - uses CLAUDE.md naming
   home.file.".claude/CLAUDE.md" = {
-    text = builtins.readFile ./files/AGENTS.md;
+    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
   };
 
   # agents.md standard - for generic AI coding agents
   xdg.configFile."agents/AGENTS.md" = {
-    text = builtins.readFile ./files/AGENTS.md;
+    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
   };
 
   # Claude Code sub-agents
   home.file.".claude/agents/architectural-reviewer.md" = {
-    text = builtins.readFile ./files/agents/architectural-reviewer.md;
+    source = "${repoPath}/home-manager/files/claude/agents/architectural-reviewer.md";
   };
 
   home.file.".claude/agents/security-focused-reviewer.md" = {
-    text = builtins.readFile ./files/agents/security-focused-reviewer.md;
+    source = "${repoPath}/home-manager/files/claude/agents/security-focused-reviewer.md";
   };
 
   home.file.".claude/agents/claude-md-curator.md" = {
-    text = builtins.readFile ./files/agents/claude-md-curator.md;
+    source = "${repoPath}/home-manager/files/claude/agents/claude-md-curator.md";
   };
 
   # Claude Code system-level settings
   home.file.".claude/settings.json" = {
-    text = builtins.toJSON {
-      permissions = {
-        allow = [
-          "Bash(ls:*)"
-          "Bash(find:*)"
-          "Bash(mkdir:*)"
-          "Bash(go run mage.go:*)"
-          "Bash(npm test:*)"
-          "Bash(npm test)"
-          "Bash(npm run build:*)"
-          "Bash(npm run format:*)"
-          "Bash(npm run lint:*)"
-          "Bash(gh run list:*)"
-          "Bash(gh run view:*)"
-          "Bash(rg:*)"
-        ];
-        deny = [];
-      };
-    };
+    source = "${repoPath}/home-manager/files/claude/claude-settings.json";
   };
 
   programs.direnv = {
