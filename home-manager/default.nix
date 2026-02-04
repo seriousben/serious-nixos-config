@@ -63,6 +63,23 @@ in
     source = "${repoPath}/home-manager/files/claude/claude-settings.json";
   };
 
+  # Pi coding agent configuration
+  # AGENTS.md - reuse Claude instructions
+  home.file.".pi/agent/AGENTS.md" = {
+    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
+  };
+
+  # Pi settings
+  home.file.".pi/agent/settings.json" = {
+    source = "${repoPath}/home-manager/files/pi/settings.json";
+  };
+
+  # Pi extensions - sourced from various repos, updated via `make update-pi-extensions`
+  home.file.".pi/agent/extensions" = {
+    source = "${repoPath}/home-manager/files/pi/extensions";
+    recursive = true;
+  };
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -157,8 +174,6 @@ in
 
   programs.git = {
     enable = true;
-    userName = "Benjamin Boudreau";
-    userEmail = "boudreau.benjamin@gmail.com";
     signing = {
       key = "A29A33BE12C39BE2";
       signByDefault = true;
@@ -171,18 +186,22 @@ in
       "indexify_local_runner_cache"
       "indexify_storage"
     ];
-    aliases = {
-      up = "!git remote update -p; git merge --ff-only @{u}; git submodule update --init";
-      cleanup = "!git branch --merged | grep  -v '\\*\\|main\\|develop\\|master' | xargs -n 1 -r git branch -d";
-      prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
-      root = "rev-parse --show-toplevel";
-      # We wanna grab those pesky un-added files!
-      # https://git-scm.com/docs/git-stash
-      stash-all = "stash save --include-untracked";
-    };
 
-    extraConfig = {
-      user.useConfigOnly = true;
+    settings = {
+      user = {
+        name = "Benjamin Boudreau";
+        email = "boudreau.benjamin@gmail.com";
+        useConfigOnly = true;
+      };
+      alias = {
+        up = "!git remote update -p; git merge --ff-only @{u}; git submodule update --init";
+        cleanup = "!git branch --merged | grep  -v '\\*\\|main\\|develop\\|master' | xargs -n 1 -r git branch -d";
+        prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
+        root = "rev-parse --show-toplevel";
+        # We wanna grab those pesky un-added files!
+        # https://git-scm.com/docs/git-stash
+        stash-all = "stash save --include-untracked";
+      };
       branch.autoSetupRebase = "always";
       core.askPass = ""; # needs to be empty to use terminal for ask pass
       credential.helper = "store"; # want to make this more secure

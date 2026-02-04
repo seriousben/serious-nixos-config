@@ -5,6 +5,10 @@
   user,
   ...
 }:
+let
+  # LLM/AI CLI tools from numtide/llm-agents.nix (daily updates, binary cache)
+  llmAgents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   environment.systemPackages =
     (with pkgs; [
@@ -54,6 +58,11 @@
       uv
 
     ])
+    ++ [
+      # LLM/AI CLI tools from numtide/llm-agents.nix
+      llmAgents.pi
+      llmAgents.claude-code
+    ]
     ++ (with pkgs-unstable; [
       postgresql_17
       k6
@@ -72,13 +81,13 @@
     inherit user;
     enable = true;
     taps = {
-      "homebrew/homebrew-core" = inputs.homebrew-core;
-      "homebrew/homebrew-cask" = inputs.homebrew-cask;
-      "homebrew/homebrew-bundle" = inputs.homebrew-bundle;
-      "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
-      "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
+      "homebrew/core" = inputs.homebrew-core;
+      "homebrew/cask" = inputs.homebrew-cask;
+      "homebrew/bundle" = inputs.homebrew-bundle;
+      "tilt-dev/tap" = inputs.tilt-dev-tap;
+      "seriousben/tiltbar" = inputs.tiltbar-tap;
     };
-    mutableTaps = false;
+    mutableTaps = true;
     autoMigrate = true;
   };
   homebrew = {
@@ -123,7 +132,6 @@
 
       # LLM
       "claude"
-      "claude-code"
 
       # Work
       "granola"

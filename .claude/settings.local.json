@@ -23,7 +23,11 @@
       "Bash(gh api:*)",
       "WebFetch(domain:jvns.ca)",
       "Bash(gh search:*)",
-      "Bash(gh gist list:*)"
+      "Bash(gh gist list:*)",
+      "Bash(nix search:*)",
+      "Bash(npm config:*)",
+      "WebFetch(domain:code-notes.jhuizy.com)",
+      "Bash(npm view:*)"
     ]
   },
   "enableAllProjectMcpServers": false

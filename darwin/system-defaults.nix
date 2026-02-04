@@ -27,6 +27,15 @@
     ];
   };
 
+  # Application Layer Firewall settings
+  # Disabled: Mac is managed by MDM, firewall settings cannot be modified from command line
+  # networking.applicationFirewall = {
+  #   enable = true;
+  #   allowSigned = true;
+  #   allowSignedApp = true;
+  #   enableStealthMode = true;
+  # };
+
   # TODO: Disable finder tags, configure favorite folders.
   system = {
     # Sets the state version for the Nix Darwin configuration
@@ -161,19 +170,7 @@
         };
       };
 
-      # Application Layer Firewall settings
-      alf = {
-        # Allows signed downloaded applications through the firewall
-        allowdownloadsignedenabled = 1;
-        # Allows signed applications through the firewall
-        allowsignedenabled = 1;
-        # Sets the firewall to be enabled
-        globalstate = 1;
-        # Disables firewall logging
-        loggingenabled = 0;
-        # Enables stealth mode to prevent responses to network discovery attempts
-        stealthenabled = 1;
-      };
+
 
       # Launch Services settings (handles file associations and app launching)
       LaunchServices = {
