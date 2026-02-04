@@ -84,8 +84,8 @@ in
       "homebrew/core" = inputs.homebrew-core;
       "homebrew/cask" = inputs.homebrew-cask;
       "homebrew/bundle" = inputs.homebrew-bundle;
-      "tilt-dev/tap" = inputs.tilt-dev-tap;
-      "seriousben/tiltbar" = inputs.tiltbar-tap;
+      "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
+      "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
     };
     mutableTaps = true;
     autoMigrate = true;
@@ -108,6 +108,7 @@ in
     # Taps are already defined in nix-homebrew.taps above
 
     brews = [
+      "azure-cli"
       "gh"
       "k3d"
       "tilt-dev/tap/tilt"
