@@ -122,10 +122,12 @@ const PULL_REQUEST_PROMPT_FALLBACK =
 const FOLDER_REVIEW_PROMPT =
 	"Review the code in the following paths: {paths}. This is a snapshot review (not a diff). Read the files directly in these paths and provide prioritized, actionable findings.";
 
-// The detailed review rubric (adapted from Codex's review_prompt.md)
+// The detailed review rubric using Conventional Comments format
+// See: https://conventionalcomments.org/
 const REVIEW_RUBRIC = `# Review Guidelines
 
 You are acting as a code reviewer for a proposed code change.
+Use **Conventional Comments** format for all feedback (e.g., \`issue (blocking): subject\`, \`suggestion (non-blocking): subject\`, \`nitpick:\`, \`praise:\`, etc.).
 
 ## Determining what to flag
 
@@ -150,13 +152,13 @@ Flag issues that:
 ## Comment guidelines
 
 1. Be clear about why the issue is a problem.
-2. Communicate severity appropriately - don't exaggerate.
-3. Be brief - at most 1 paragraph.
+2. Communicate severity appropriately using labels and decorations.
+3. Be brief - at most 1 paragraph for discussion.
 4. Keep code snippets under 3 lines, wrapped in inline code or code blocks.
 5. Explicitly state scenarios/environments where the issue arises.
 6. Use a matter-of-fact tone - helpful AI assistant, not accusatory.
 7. Write for quick comprehension without close reading.
-8. Avoid excessive flattery or unhelpful phrases like "Great job...".
+8. Use \`praise\` sparingly and only for genuinely notable implementations.
 
 ## Review priorities
 
@@ -168,21 +170,13 @@ Flag issues that:
 6. Apply system-level thinking; flag changes that increase operational risk or on-call wakeups.
 7. Ensure that errors are always checked against codes or stable identifiers, never error messages.
 
-## Priority levels
-
-Tag each finding with a priority level in the title:
-- [P0] - Drop everything to fix. Blocking release/operations. Only for universal issues.
-- [P1] - Urgent. Should be addressed in the next cycle.
-- [P2] - Normal. To be fixed eventually.
-- [P3] - Low. Nice to have.
-
 ## Output format
 
-Provide your findings in a clear, structured format:
-1. List each finding with its priority tag, file location, and explanation.
-2. Keep line references as short as possible (avoid ranges over 5-10 lines).
-3. At the end, provide an overall verdict: "correct" (no blocking issues) or "needs attention" (has blocking issues).
-4. Ignore trivial style issues unless they obscure meaning or violate documented standards.
+1. List each finding using the Conventional Comments format.
+2. Include file path and line number before each comment.
+3. Keep line references as short as possible (avoid ranges over 5-10 lines).
+4. At the end, provide an overall verdict: "approved" (no blocking issues) or "changes requested" (has blocking issues).
+5. Ignore trivial style issues unless they obscure meaning or violate documented standards.
 
 Output all findings the author would fix if they knew about them. If there are no qualifying findings, explicitly state the code looks good. Don't stop at the first finding - list every qualifying issue.`;
 
@@ -1098,8 +1092,8 @@ Create a structured summary of this review branch for context when returning lat
 You MUST summarize the code review that was performed in this branch so that the user can act on it.
 
 1. What was reviewed (files, changes, scope)
-2. Key findings and their priority levels (P0-P3)
-3. The overall verdict (correct vs needs attention)
+2. Key findings using Conventional Comments labels (issue, suggestion, nitpick, etc.)
+3. The overall verdict (approved vs changes requested)
 4. Any action items or recommendations
 
 YOU MUST append a message with this EXACT format at the end of your summary:
@@ -1113,13 +1107,18 @@ YOU MUST append a message with this EXACT format at the end of your summary:
 
 ## Code Review Findings
 
-[P0] Short Title
+List blocking items first, then non-blocking items.
 
+**issue (blocking): Short Title**
 File: path/to/file.ext:line_number
-
 \`\`\`
 affected code snippet
 \`\`\`
+Brief explanation of what needs to change.
+
+**suggestion (non-blocking): Short Title**
+File: path/to/file.ext:line_number
+Brief explanation of the suggested improvement.
 
 Preserve exact file paths, function names, and error messages.
 `;

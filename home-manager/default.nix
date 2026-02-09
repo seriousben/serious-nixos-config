@@ -36,49 +36,28 @@ in
   };
 
   # Claude Code configuration - uses CLAUDE.md naming
-  home.file.".claude/CLAUDE.md" = {
-    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
-  };
+  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
 
   # agents.md standard - for generic AI coding agents
-  xdg.configFile."agents/AGENTS.md" = {
-    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
-  };
+  xdg.configFile."agents/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
 
   # Claude Code sub-agents
-  home.file.".claude/agents/architectural-reviewer.md" = {
-    source = "${repoPath}/home-manager/files/claude/agents/architectural-reviewer.md";
-  };
-
-  home.file.".claude/agents/security-focused-reviewer.md" = {
-    source = "${repoPath}/home-manager/files/claude/agents/security-focused-reviewer.md";
-  };
-
-  home.file.".claude/agents/claude-md-curator.md" = {
-    source = "${repoPath}/home-manager/files/claude/agents/claude-md-curator.md";
-  };
+  home.file.".claude/agents/architectural-reviewer.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/architectural-reviewer.md";
+  home.file.".claude/agents/security-focused-reviewer.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/security-focused-reviewer.md";
+  home.file.".claude/agents/claude-md-curator.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/claude-md-curator.md";
 
   # Claude Code system-level settings
-  home.file.".claude/settings.json" = {
-    source = "${repoPath}/home-manager/files/claude/claude-settings.json";
-  };
+  home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/claude-settings.json";
 
   # Pi coding agent configuration
   # AGENTS.md - reuse Claude instructions
-  home.file.".pi/agent/AGENTS.md" = {
-    source = "${repoPath}/home-manager/files/claude/CLAUDE.md";
-  };
+  home.file.".pi/agent/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
 
   # Pi settings
-  home.file.".pi/agent/settings.json" = {
-    source = "${repoPath}/home-manager/files/pi/settings.json";
-  };
+  home.file.".pi/agent/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/settings.json";
 
   # Pi extensions - sourced from various repos, updated via `make update-pi-extensions`
-  home.file.".pi/agent/extensions" = {
-    source = "${repoPath}/home-manager/files/pi/extensions";
-    recursive = true;
-  };
+  home.file.".pi/agent/extensions".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/extensions";
 
   programs.direnv = {
     enable = true;

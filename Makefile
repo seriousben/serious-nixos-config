@@ -1,9 +1,9 @@
 .PHONY: apply
 apply:
-	sudo $$(which darwin-rebuild) switch --impure --flake .#seriousben-mbp
+	sudo $$(which darwin-rebuild) switch --flake .#seriousben-mbp
 
 .PHONY: update
-update: update-pi-extensions
+update:
 	nix flake update
 
 .PHONY: update-pi-extensions
