@@ -9,11 +9,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1769353768,
-        "narHash": "sha256-zI+7cbMI4wMIR57jMjDSEsVb3grapTnURDxxJPYFIW0=",
+        "lastModified": 1771437256,
+        "narHash": "sha256-bLqwib+rtyBRRVBWhMuBXPCL/OThfokA+j6+uH7jDGU=",
         "owner": "numtide",
         "repo": "blueprint",
-        "rev": "c7da5c70ad1c9b60b6f5d4f674fbe205d48d8f6c",
+        "rev": "06ee7190dc2620ea98af9eb225aa9627b68b0e33",
         "type": "github"
       },
       "original": {
@@ -83,11 +83,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770260404,
-        "narHash": "sha256-3iVX1+7YUIt23hBx1WZsUllhbmP2EnXrV8tCRbLxHc8=",
+        "lastModified": 1771744638,
+        "narHash": "sha256-EDLi+YAsEEAmMeZe1v6GccuGRbCkpSZp/+A6g+pivR8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "0d782ee42c86b196acff08acfbf41bb7d13eed5b",
+        "rev": "cb6c151f5c9db4df0b69d06894dc8484de1f16a0",
         "type": "github"
       },
       "original": {
@@ -116,11 +116,11 @@
     "homebrew-cask": {
       "flake": false,
       "locked": {
-        "lastModified": 1770405942,
-        "narHash": "sha256-eJXHgFV0sHFAWysOWaY+D4JtuwUFuFYd9oOvsqdtog8=",
+        "lastModified": 1771871163,
+        "narHash": "sha256-sMtAqhPaDsniB47VBvfKeaOxNkLPj5NkVwQG+oBCVGw=",
         "owner": "homebrew",
         "repo": "homebrew-cask",
-        "rev": "f7f932bdb4123554259f06edf871fc0483d6d045",
+        "rev": "201d6422854e4b555b12090682e3e5081d9a1adc",
         "type": "github"
       },
       "original": {
@@ -132,11 +132,11 @@
     "homebrew-core": {
       "flake": false,
       "locked": {
-        "lastModified": 1770404947,
-        "narHash": "sha256-X3oXimay1TG6HsfXtjS/YMUDpGKv92tV9J038ULtZlU=",
+        "lastModified": 1771872323,
+        "narHash": "sha256-Eh3X88Mf3tOiCAiJMy0huWLtVsh9Nggs83yzaK1+pJw=",
         "owner": "homebrew",
         "repo": "homebrew-core",
-        "rev": "80d30d093e9e3357174797ae1ccf896c4711b0e5",
+        "rev": "b27938cbbdc73133df4adbf7769611a1de6a4e6c",
         "type": "github"
       },
       "original": {
@@ -154,11 +154,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1770406041,
-        "narHash": "sha256-qRlZ7phCPmV51GjNmQ1WHNNPGJSFMIIrmLmE7bOkx8c=",
+        "lastModified": 1771858033,
+        "narHash": "sha256-/m1I+ZGvA+7C6flVzQZrktOKdb4RRbXX/gup0VrhP4Q=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "7ae8b7d8595b4a1a6edadf495f7a0c3dafbcbf03",
+        "rev": "c4c64459db15bb02c5c67b862581c1bfd28144f8",
         "type": "github"
       },
       "original": {
@@ -187,11 +187,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1770136044,
-        "narHash": "sha256-tlFqNG/uzz2++aAmn4v8J0vAkV3z7XngeIIB3rM3650=",
+        "lastModified": 1771714954,
+        "narHash": "sha256-nhZJPnBavtu40/L2aqpljrfUNb2rxmWTmSjK2c9UKds=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "e576e3c9cf9bad747afcddd9e34f51d18c855b4e",
+        "rev": "afbbf774e2087c3d734266c22f96fca2e78d3620",
         "type": "github"
       },
       "original": {
@@ -203,11 +203,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1770169770,
-        "narHash": "sha256-awR8qIwJxJJiOmcEGgP2KUqYmHG4v/z8XpL9z8FnT1A=",
+        "lastModified": 1771423170,
+        "narHash": "sha256-K7Dg9TQ0mOcAtWTO/FX/FaprtWQ8BmEXTpLIaNRhEwU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "aa290c9891fa4ebe88f8889e59633d20cc06a5f2",
+        "rev": "bcc4a9d9533c033d806a46b37dc444f9b0da49dd",
         "type": "github"
       },
       "original": {
@@ -284,11 +284,11 @@
     "tiltbar-tap": {
       "flake": false,
       "locked": {
-        "lastModified": 1770235473,
-        "narHash": "sha256-8giDwalbqDOJBR1bvy3tpTHzxqjQcooOkpmz1Z38pFs=",
+        "lastModified": 1771872855,
+        "narHash": "sha256-wVdB72eXBdWxyAtwwBOopzzGZWkt/5fS9YhxcC7CaEE=",
         "owner": "seriousben",
         "repo": "homebrew-tiltbar",
-        "rev": "2bf9e5b97afa3611adb01dab1a5dde53ce64139b",
+        "rev": "4677ce14bec04b4e3d2e40574563c9de0dd6110b",
         "type": "github"
       },
       "original": {

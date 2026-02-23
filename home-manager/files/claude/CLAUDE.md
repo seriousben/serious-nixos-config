@@ -9,7 +9,6 @@ User-level agent instructions for software engineering workflows.
 - GNU sed is available: `sed -i ///` syntax works for in-place editing
 - `rg` (ripgrep) is available for searching
 - Git is configured with GPG signing enabled
-- NixOS/Nix environment management
 
 ## Code Quality Boundaries
 
