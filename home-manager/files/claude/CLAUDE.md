@@ -30,6 +30,29 @@ User-level agent instructions for software engineering workflows.
 - Breaking up cohesive functionality into many small pieces
 - Adding complexity for minor gains
 
+## Command Output Handling
+
+**Never re-run a command just to filter its output differently.** This wastes time, tokens, and may produce different results.
+
+❌ **Anti-pattern:**
+```bash
+long_command 2>&1 | tail -30
+# ... then immediately ...
+long_command 2>&1 | grep "Failure"
+```
+
+✅ **Correct approach:** Capture once to a temp file, then inspect as needed:
+```bash
+tmpf=$(mktemp /tmp/cmd-output.XXXXXX)
+long_command &> "$tmpf"
+tail -30 "$tmpf"
+grep "Failure" "$tmpf"
+# Clean up when done
+rm -f "$tmpf"
+```
+
+This applies to any long-running or verbose command — builds, tests, linters, API calls, etc. Prioritize speed and minimal token usage: run the command once, inspect the output many times.
+
 ## Workflow Guidelines
 
 **Making Changes:**
