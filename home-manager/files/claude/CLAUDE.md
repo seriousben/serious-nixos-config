@@ -73,6 +73,16 @@ This applies to any long-running or verbose command — builds, tests, linters, 
 - Explain why, not what
 - Document non-obvious decisions
 
+## Planning & RFCs
+
+The `seriousben-agent-plans/` directory (gitignored) is available in any repo for generating RFCs, plans, and tracking work-in-progress. Use it to:
+
+- **Draft RFCs** — Write design documents before implementing significant changes (`seriousben-agent-plans/rfcs/`)
+- **Create plans** — Break down complex tasks into step-by-step plans (`seriousben-agent-plans/plans/`)
+- **Track WIP** — Record current progress, open questions, and next steps (`seriousben-agent-plans/wip/`)
+
+When asked to create a plan and no other planning process is defined, use this directory. Update WIP notes as you go so context is preserved across sessions and compactions.
+
 ## When in Doubt
 
 - Choose the simpler approach

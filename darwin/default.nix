@@ -64,12 +64,12 @@ in
       llmAgents.claude-code
     ]
     ++ (with pkgs-unstable; [
-      postgresql_17
+      postgresql
       k6
       terraform
 
       # go
-      go_1_24
+      go
     ]);
 
   nix = {
