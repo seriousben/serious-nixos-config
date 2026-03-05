@@ -15,4 +15,4 @@ if [ -f "$config" ]; then
     config_args=(--config "$config")
 fi
 
-gitleaks protect --staged "${config_args[@]}"
+gitleaks protect --staged --no-banner --log-level warn "${config_args[@]}"
