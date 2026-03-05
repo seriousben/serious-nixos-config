@@ -54,9 +54,16 @@
     };
 
     # LLM/AI CLI tools - daily updated packages with binary cache
+    # Note: don't use `inputs.nixpkgs.follows` here — llm-agents pins its own
+    # nixpkgs that it tests against; overriding it can cause nodejs build failures.
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Agent skills - curated skills for AI coding agents
+    skills-curated = {
+      url = "github:trailofbits/skills-curated";
+      flake = false;
     };
   };
 

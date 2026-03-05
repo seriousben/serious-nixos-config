@@ -1,0 +1,14 @@
+# Global gitleaks configuration
+# https://github.com/gitleaks/gitleaks#configuration
+#
+# Add allowlist entries here for known false positives, e.g.:
+#
+# [allowlist]
+# paths = [
+#     '''some/path/to/ignore''',
+# ]
+# commits = [
+#     '''abc123deadbeef''',
+# ]
+
+title = "global gitleaks config"

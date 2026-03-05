@@ -25,6 +25,15 @@ in
     configHome = "${config.home.homeDirectory}/.config";
   };
 
+  # Gitleaks global config
+  xdg.configFile."gitleaks/.gitleaks.toml".source = ./files/gitleaks/.gitleaks.toml;
+
+  # Global git hooks (gitleaks pre-commit)
+  xdg.configFile."git-hooks/pre-commit" = {
+    source = ./files/git-hooks/pre-commit;
+    executable = true;
+  };
+
   # Instead, manually create the config file
   xdg.configFile."ghostty/config" = {
     text = ''
@@ -58,6 +67,9 @@ in
 
   # Pi extensions - sourced from various repos, updated via `make update-pi-extensions`
   home.file.".pi/agent/extensions".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/extensions";
+
+  # Pi skills - from trailofbits/skills-curated (pinned via flake.lock)
+  home.file.".pi/agent/skills/humanizer".source = "${inputs.skills-curated}/plugins/humanizer/skills/humanizer";
 
   programs.direnv = {
     enable = true;
@@ -183,6 +195,7 @@ in
       };
       branch.autoSetupRebase = "always";
       core.askPass = ""; # needs to be empty to use terminal for ask pass
+      core.hooksPath = "${config.xdg.configHome}/git-hooks";
       credential.helper = "store"; # want to make this more secure
       github.user = "seriousben";
       push.default = "tracking";

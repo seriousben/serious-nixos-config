@@ -23,6 +23,7 @@ in
 
       # git
       git
+      gitleaks
       openssh
       gnupg
 
@@ -34,6 +35,7 @@ in
       direnv
       _1password-cli
       awscli2
+      google-cloud-sdk
       cmake
       # ngrok
 

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Global pre-commit hook: scan staged changes for secrets with gitleaks.
+# Bypass with: SKIP_GITLEAKS=1 git commit ...
+
+set -euo pipefail
+
+if [ "${SKIP_GITLEAKS:-0}" = "1" ]; then
+    exit 0
+fi
+
+# Use XDG config if available
+config="${XDG_CONFIG_HOME:-$HOME/.config}/gitleaks/.gitleaks.toml"
+config_args=()
+if [ -f "$config" ]; then
+    config_args=(--config "$config")
+fi
+
+gitleaks protect --staged "${config_args[@]}"
