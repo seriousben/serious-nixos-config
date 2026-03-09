@@ -145,6 +145,9 @@ in
       "shureplus-motiv"
       "elgato-control-center"
 
+      # networking
+      "tailscale"
+
       # docker / k8s
       "orbstack"
     ];

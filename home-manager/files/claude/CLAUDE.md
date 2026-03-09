@@ -83,6 +83,8 @@ The `seriousben-agent-plans/` directory (gitignored) is available in any repo fo
 
 When asked to create a plan and no other planning process is defined, use this directory. Update WIP notes as you go so context is preserved across sessions and compactions.
 
+**Important:** Never reference `seriousben-agent-plans/` or any of its contents in committed code, comments, commit messages, PRs, or any other artifacts that leave the local workspace. This directory is strictly for internal agent use only.
+
 ## When in Doubt
 
 - Choose the simpler approach

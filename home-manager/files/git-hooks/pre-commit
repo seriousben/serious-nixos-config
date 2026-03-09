@@ -1,18 +1,46 @@
 #!/usr/bin/env bash
-# Global pre-commit hook: scan staged changes for secrets with gitleaks.
-# Bypass with: SKIP_GITLEAKS=1 git commit ...
+# Global pre-commit hook: runs gitleaks, then delegates to repo-local hooks.
+# Bypass gitleaks with: SKIP_GITLEAKS=1 git commit ...
 
 set -euo pipefail
 
-if [ "${SKIP_GITLEAKS:-0}" = "1" ]; then
-    exit 0
+# --- gitleaks (global) ---
+if [ "${SKIP_GITLEAKS:-0}" != "1" ]; then
+    config="${XDG_CONFIG_HOME:-$HOME/.config}/gitleaks/.gitleaks.toml"
+    config_args=()
+    if [ -f "$config" ]; then
+        config_args=(--config "$config")
+    fi
+
+    gitleaks protect --staged --no-banner --log-level warn "${config_args[@]}"
 fi
 
-# Use XDG config if available
-config="${XDG_CONFIG_HOME:-$HOME/.config}/gitleaks/.gitleaks.toml"
-config_args=()
-if [ -f "$config" ]; then
-    config_args=(--config "$config")
+# --- repo-local hooks ---
+# Since core.hooksPath overrides .git/hooks, delegate manually so
+# repo-local tools (lefthook, husky, etc.) still work.
+git_dir="$(git rev-parse --absolute-git-dir 2>/dev/null || true)"
+local_hook="${git_dir}/hooks/pre-commit"
+if [ -n "$git_dir" ] && [ -x "$local_hook" ]; then
+    exec "$local_hook" "$@"
 fi
 
-gitleaks protect --staged --no-banner --log-level warn "${config_args[@]}"
+# --- lefthook fallback ---
+# lefthook install can't write to our read-only hooksPath, so .git/hooks
+# may not have a lefthook script. Call lefthook directly if configured.
+if [ "${LEFTHOOK:-}" != "0" ]; then
+    dir="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+    if [ -n "$dir" ]; then
+        has_config=false
+        for name in lefthook .lefthook; do
+            for ext in .yml .yaml .toml .json; do
+                [ -f "$dir/${name}${ext}" ] && has_config=true && break 2
+            done
+        done
+
+        if [ "$has_config" = true ]; then
+            if [ -x "$dir/node_modules/.bin/lefthook" ]; then
+                exec "$dir/node_modules/.bin/lefthook" run --no-auto-install pre-commit "$@"
+            fi
+        fi
+    fi
+fi

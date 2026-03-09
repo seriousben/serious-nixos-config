@@ -7,6 +7,25 @@
 }:
 let
   repoPath = "${config.home.homeDirectory}/src/seriousben/serious-nixos-config";
+
+  # Build git hooks directory in the nix store (read-only) so that tools like
+  # lefthook cannot overwrite our hooks via `lefthook install -f`.
+  gitHooksDir = pkgs.runCommand "git-hooks" {} ''
+    mkdir -p $out
+    cp ${./files/git-hooks/pre-commit} $out/pre-commit
+    chmod +x $out/pre-commit
+  '';
+
+  scriptsDir = "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts";
+
+  # Named wrapper scripts for launchd agents so they show a descriptive
+  # process name in Activity Monitor instead of "bash".
+  gc-screenshots = pkgs.writeShellScript "gc-screenshots" ''
+    exec ${scriptsDir}/cleanup-screenshots.sh --verbose
+  '';
+  organize-downloads = pkgs.writeShellScript "organize-downloads" ''
+    exec ${scriptsDir}/organize-downloads.sh --verbose
+  '';
 in
 {
   home = {
@@ -28,11 +47,8 @@ in
   # Gitleaks global config
   xdg.configFile."gitleaks/.gitleaks.toml".source = ./files/gitleaks/.gitleaks.toml;
 
-  # Global git hooks (gitleaks pre-commit)
-  xdg.configFile."git-hooks/pre-commit" = {
-    source = ./files/git-hooks/pre-commit;
-    executable = true;
-  };
+  # Global git hooks are built into the nix store (see gitHooksDir above)
+  # so they can't be overwritten by tools like lefthook.
 
   # Instead, manually create the config file
   xdg.configFile."ghostty/config" = {
@@ -195,7 +211,7 @@ in
       };
       branch.autoSetupRebase = "always";
       core.askPass = ""; # needs to be empty to use terminal for ask pass
-      core.hooksPath = "${config.xdg.configHome}/git-hooks";
+      core.hooksPath = "${gitHooksDir}";
       credential.helper = "store"; # want to make this more secure
       github.user = "seriousben";
       push.default = "tracking";
@@ -271,11 +287,9 @@ in
       gc_screenshots = {
         enable = true;
         config = {
-          Program = "${pkgs.bash}/bin/bash";
+          Program = "${gc-screenshots}";
           ProgramArguments = [
-            "${pkgs.bash}/bin/bash"
-            "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts/cleanup-screenshots.sh"
-            "--verbose"
+            "${gc-screenshots}"
           ];
           RunAtLoad = false;
           KeepAlive = false;
@@ -289,11 +303,9 @@ in
       organize_downloads = {
         enable = true;
         config = {
-          Program = "${pkgs.bash}/bin/bash";
+          Program = "${organize-downloads}";
           ProgramArguments = [
-            "${pkgs.bash}/bin/bash"
-            "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts/organize-downloads.sh"
-            "--verbose"
+            "${organize-downloads}"
           ];
           RunAtLoad = false;
           KeepAlive = false;
