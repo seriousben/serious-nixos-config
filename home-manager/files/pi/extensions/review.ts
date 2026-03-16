@@ -20,10 +20,6 @@
  * - `/review folder src docs` - review specific folders/files (snapshot, not diff)
  * - `/review custom "check for security issues"` - custom instructions
  *
- * Project-specific review guidelines:
- * - If a REVIEW_GUIDELINES.md file exists in the same directory as .pi,
- *   its contents are appended to the review prompt.
- *
  * Note: PR review requires a clean working tree (no uncommitted changes to tracked files).
  */
 
@@ -31,7 +27,6 @@ import type { ExtensionAPI, ExtensionContext, ExtensionCommandContext } from "@m
 import { DynamicBorder, BorderedLoader } from "@mariozechner/pi-coding-agent";
 import { Container, type SelectItem, SelectList, Text, Key } from "@mariozechner/pi-tui";
 import path from "node:path";
-import { promises as fs } from "node:fs";
 
 // State to track fresh session review (where we branched from).
 // Module-level state means only one review can be active at a time.
@@ -126,89 +121,65 @@ const FOLDER_REVIEW_PROMPT =
 // See: https://conventionalcomments.org/
 const REVIEW_RUBRIC = `# Review Guidelines
 
-You are acting as a code reviewer for a proposed code change.
-Use **Conventional Comments** format for all feedback (e.g., \`issue (blocking): subject\`, \`suggestion (non-blocking): subject\`, \`nitpick:\`, \`praise:\`, etc.).
+Use Conventional Comments: \`issue (blocking):\`, \`suggestion (non-blocking):\`, \`nitpick:\`.
 
-## Determining what to flag
+## Core Principles
 
-Flag issues that:
-1. Meaningfully impact the accuracy, performance, security, or maintainability of the code.
-2. Are discrete and actionable (not general issues or multiple combined issues).
-3. Don't demand rigor inconsistent with the rest of the codebase.
-4. Were introduced in the changes being reviewed (not pre-existing bugs).
-5. The author would likely fix if aware of them.
-6. Don't rely on unstated assumptions about the codebase or author's intent.
-7. Have provable impact on other parts of the code (not speculation).
-8. Are clearly not intentional changes by the author.
-9. Be particularly careful with untrusted user input and follow the specific guidelines to review.
+- Be direct. If code has problems, say so clearly.
+- Be specific. File, line, exact problem, suggested fix.
+- Read before you judge. Trace the logic, understand the intent.
+- Verify claims. Don't say "this would break X" without checking.
 
-## Untrusted User Input
+## Priority Levels
 
-1. Be careful with open redirects, they must always be checked to only go to trusted domains (?next_page=...)
-2. Always flag SQL that is not parametrized
-3. In systems with user supplied URL input, http fetches always need to be protected against access to local resources (intercept DNS resolver!)
-4. Escape, don't sanitize if you have the option (eg: HTML escaping)
+The bar for flagging is high. Ask: "Will this actually cause a real problem?"
 
-## Comment guidelines
+- **[P0]** Will break production, lose data, or create a security hole. Must be provable.
+- **[P1]** Genuine foot gun. Someone will trip over this and waste hours.
+- **[P2]** Worth mentioning. Real improvement, but code works without it.
+- **[P3]** Nice to have. Almost irrelevant.
 
-1. Be clear about why the issue is a problem.
-2. Communicate severity appropriately using labels and decorations.
-3. Be brief - at most 1 paragraph for discussion.
-4. Keep code snippets under 3 lines, wrapped in inline code or code blocks.
-5. Explicitly state scenarios/environments where the issue arises.
-6. Use a matter-of-fact tone - helpful AI assistant, not accusatory.
-7. Write for quick comprehension without close reading.
-8. Use \`praise\` sparingly and only for genuinely notable implementations.
+## What to Flag
 
-## Review priorities
+- Real bugs that will manifest in actual usage
+- Security issues with concrete exploit scenarios
+- Logic errors where code doesn't match intent
+- Missing error handling where errors will occur
+- Catch blocks that hide failures (returning null/[]/false, logging-and-continue)
+- Unparameterized SQL, open redirects, unprotected user-supplied URL fetches
+- Genuinely confusing code that will cause the next person to introduce bugs
 
-1. Call out newly added dependencies explicitly and explain why they're needed.
-2. Prefer simple, direct solutions over wrappers or abstractions without clear value.
-3. Favor fail-fast behavior; avoid logging-and-continue patterns that hide errors.
-4. Prefer predictable production behavior; crashing is better than silent degradation.
-5. Treat back pressure handling as critical to system stability.
-6. Apply system-level thinking; flag changes that increase operational risk or on-call wakeups.
-7. Ensure that errors are always checked against codes or stable identifiers, never error messages.
+## What NOT to Flag
 
-## Output format
+- Naming preferences (unless actively misleading)
+- Hypothetical edge cases (check if they're actually possible first)
+- Style differences
+- "Best practice" violations where the code works fine
+- Speculative future scaling problems
 
-1. List each finding using the Conventional Comments format.
-2. Include file path and line number before each comment.
-3. Keep line references as short as possible (avoid ranges over 5-10 lines).
-4. At the end, provide an overall verdict: "approved" (no blocking issues) or "changes requested" (has blocking issues).
-5. Ignore trivial style issues unless they obscure meaning or violate documented standards.
+## Review Priorities
 
-Output all findings the author would fix if they knew about them. If there are no qualifying findings, explicitly state the code looks good. Don't stop at the first finding - list every qualifying issue.`;
+1. Call out newly added dependencies explicitly
+2. Prefer simple, direct solutions over unnecessary abstractions
+3. Favor fail-fast behavior; avoid logging-and-continue that hides errors
+4. Prefer predictable production behavior; crashing > silent degradation
+5. Treat back pressure handling as critical
+6. Apply system-level thinking; flag operational risk
+7. Ensure errors are checked against codes/stable identifiers, never messages
+8. For database migrations: assess table lock impact
 
-async function loadProjectReviewGuidelines(cwd: string): Promise<string | null> {
-	let currentDir = path.resolve(cwd);
+## Output
 
-	while (true) {
-		const piDir = path.join(currentDir, ".pi");
-		const guidelinesPath = path.join(currentDir, "REVIEW_GUIDELINES.md");
+Tag each finding with [P0]-[P3], file:line reference, brief explanation.
+Verdict: "approved" or "changes requested".
 
-		const piStats = await fs.stat(piDir).catch(() => null);
-		if (piStats?.isDirectory()) {
-			const guidelineStats = await fs.stat(guidelinesPath).catch(() => null);
-			if (guidelineStats?.isFile()) {
-				try {
-					const content = await fs.readFile(guidelinesPath, "utf8");
-					const trimmed = content.trim();
-					return trimmed ? trimmed : null;
-				} catch {
-					return null;
-				}
-			}
-			return null;
-		}
+If the code works and is readable, a short review with few findings is the right answer. Don't manufacture findings.
 
-		const parentDir = path.dirname(currentDir);
-		if (parentDir === currentDir) {
-			return null;
-		}
-		currentDir = parentDir;
-	}
-}
+## Human Callouts (non-blocking, end of review)
+
+Only if applicable: new migration (assess lock impact), new dependency, auth/permission change, breaking API change, destructive operation.`;
+
+
 
 /**
  * Get the merge base between HEAD and a branch
@@ -891,14 +862,9 @@ export default function reviewExtension(pi: ExtensionAPI) {
 
 		const prompt = await buildReviewPrompt(pi, target);
 		const hint = getUserFacingHint(target);
-		const projectGuidelines = await loadProjectReviewGuidelines(ctx.cwd);
 
 		// Combine the review rubric with the specific prompt
-		let fullPrompt = `${REVIEW_RUBRIC}\n\n---\n\nPlease perform a code review with the following focus:\n\n${prompt}`;
-
-		if (projectGuidelines) {
-			fullPrompt += `\n\nThis project has additional instructions for code reviews:\n\n${projectGuidelines}`;
-		}
+		const fullPrompt = `${REVIEW_RUBRIC}\n\n---\n\nPlease perform a code review with the following focus:\n\n${prompt}`;
 
 		const modeHint = useFreshSession ? " (fresh session)" : "";
 		ctx.ui.notify(`Starting review: ${hint}${modeHint}`, "info");

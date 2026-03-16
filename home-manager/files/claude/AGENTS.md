@@ -56,6 +56,22 @@ rm -f "$tmpf"
 
 This applies to any long-running or verbose command — builds, tests, linters, API calls, etc. Prioritize speed and minimal token usage: run the command once, inspect the output many times.
 
+## Execution Discipline
+
+**Default mode is PROPOSE, not EXECUTE.**
+
+When the task involves:
+- RFC/document drafting: propose changes, wait for approval before editing
+- Multi-file or multi-repo changes: present a plan, wait for go-ahead
+- Git operations (commit, push, branch, PR): always ask first unless explicitly told
+
+**Only execute without asking when:**
+- The user says "do it", "go ahead", "implement", "commit and push"
+- The task is an unambiguous single-file edit the user explicitly requested
+- Running read-only commands (ls, grep, git diff, git log)
+
+When uncertain about scope, stop and ask.
+
 ## Workflow Guidelines
 
 **Making Changes:**
@@ -75,6 +91,46 @@ This applies to any long-running or verbose command — builds, tests, linters, 
 **Comments:**
 - Explain why, not what
 - Document non-obvious decisions
+
+## Writing Conventions
+
+When drafting RFCs, PRs, docs, or any written content:
+- No bold in body text unless the user uses bold
+- No em dashes. Use commas or periods instead.
+- Plain markdown tables (no colspan hacks, keep it renderable)
+- PR descriptions: Why + What format, concise bullets, no walls of text
+- Commit messages: imperative mood, subject under 72 chars, body is bullets
+- "remove X" means delete it completely. Don't rephrase or relocate it.
+
+## RFC and Document Drafting
+
+When iterating on documents (RFCs, PRs, docs):
+- Make exactly the change requested. Don't reorganize surrounding text.
+- After each change, show only the changed section, not the whole document.
+- Don't add sections, context, or elaboration unless asked.
+- When told "propose changes", describe what you'd change. Don't make the edits.
+
+## Code Review
+
+When reviewing code (or when `/review` is used):
+- Use Conventional Comments format: `issue (blocking):`, `suggestion (non-blocking):`, `nitpick:`, `praise:`
+- Flag only issues that meaningfully impact accuracy, performance, security, or maintainability
+- Don't flag style preferences or hypothetical edge cases
+- For migration reviews: always assess table lock impact
+- Provide specific file:line references
+- A short review with few findings is the right answer for good code
+
+## Language Conventions
+
+**TypeScript/Node:**
+- Static imports only (no `await import(...)`)
+- Prefer vitest patterns when test files use vitest
+- No `any` without justification
+
+**Go:**
+- Follow existing test harness patterns in the repo
+- Table-driven tests when testing multiple scenarios
+- `t.Helper()` in test helpers
 
 ## Planning & RFCs
 

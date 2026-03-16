@@ -67,23 +67,15 @@ in
     '';
   };
 
-  # Claude Code configuration - uses CLAUDE.md naming
-  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
-
-  # agents.md standard - for generic AI coding agents
-  xdg.configFile."agents/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
-
-  # Claude Code sub-agents
-  home.file.".claude/agents/architectural-reviewer.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/architectural-reviewer.md";
-  home.file.".claude/agents/security-focused-reviewer.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/security-focused-reviewer.md";
-  home.file.".claude/agents/claude-md-curator.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/agents/claude-md-curator.md";
+  # Shared agent instructions - AGENTS.md is the source of truth
+  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
+  xdg.configFile."agents/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
 
   # Claude Code system-level settings
   home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/claude-settings.json";
 
   # Pi coding agent configuration
-  # AGENTS.md - reuse Claude instructions
-  home.file.".pi/agent/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/CLAUDE.md";
+  home.file.".pi/agent/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
 
   # Pi settings
   home.file.".pi/agent/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/settings.json";
@@ -91,8 +83,17 @@ in
   # Pi extensions - sourced from various repos, updated via `make update-pi-extensions`
   home.file.".pi/agent/extensions".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/extensions";
 
+  # Pi subagent definitions
+  home.file.".pi/agent/agents".source = ./files/pi/agents;
+
   # Pi skills - from trailofbits/skills-curated (pinned via flake.lock)
   home.file.".pi/agent/skills/humanizer".source = "${inputs.skills-curated}/plugins/humanizer/skills/humanizer";
+
+  # Pi skills - local
+  home.file.".pi/agent/skills/pi-harness-audit".source = ./files/pi/skills/pi-harness-audit;
+  home.file.".pi/agent/skills/deslop".source = ./files/pi/skills/deslop;
+  home.file.".pi/agent/skills/systematic-debugging".source = ./files/pi/skills/systematic-debugging;
+  home.file.".pi/agent/skills/verify-completion".source = ./files/pi/skills/verify-completion;
 
   programs.direnv = {
     enable = true;
