@@ -8,7 +8,7 @@ User-level agent instructions for software engineering workflows.
 - Use GNU utilities (not BSD variants)
 - GNU sed is available: `sed -i ///` syntax works for in-place editing
 - `rg` (ripgrep) is available for searching
-- Git is configured with GPG signing enabled
+- Use `GIT_EDITOR=true` when rebasing to auto-accept the default todo list (avoids opening an interactive editor)
 - Use `gh` for GitHub operations (PRs, issues, releases, API calls)
 
 ## Code Quality Boundaries
