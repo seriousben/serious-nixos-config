@@ -9,6 +9,7 @@ User-level agent instructions for software engineering workflows.
 - GNU sed is available: `sed -i ///` syntax works for in-place editing
 - `rg` (ripgrep) is available for searching
 - Git is configured with GPG signing enabled
+- Use `gh` for GitHub operations (PRs, issues, releases, API calls)
 
 ## Code Quality Boundaries
 
@@ -19,6 +20,7 @@ User-level agent instructions for software engineering workflows.
 4. **Ask questions when uncertain** - Don't make assumptions about requirements
 
 **Design Principles:**
+- **Optimize the feedback loop** — Always think about how to shorten the cycle between making a change and knowing if it works. Prefer fast, targeted test runs; use strong types to catch errors at compile time rather than runtime.
 - Favor deep modules with simple interfaces
 - Avoid unnecessary abstraction layers
 - Keep code obvious and self-documenting
@@ -29,6 +31,7 @@ User-level agent instructions for software engineering workflows.
 - Configuration parameters to avoid design decisions
 - Breaking up cohesive functionality into many small pieces
 - Adding complexity for minor gains
+- **Dynamic imports (`await import(...)`)** — Always use static `import` at the top of the file. Dynamic imports make dependency tracking harder, break tree-shaking, and hide load-time errors. No exceptions.
 
 ## Command Output Handling
 

@@ -50,6 +50,13 @@ in
   # Global git hooks are built into the nix store (see gitHooksDir above)
   # so they can't be overwritten by tools like lefthook.
 
+  # Nix user-level config — access-tokens for private GitHub flake inputs.
+  # The actual token lives in a separate file (not in the nix store)
+  # created by scripts/setup-nix-github-token.sh (reads from 1Password).
+  xdg.configFile."nix/nix.conf".text = ''
+    !include nix-access-tokens.conf
+  '';
+
   # Instead, manually create the config file
   xdg.configFile."ghostty/config" = {
     text = ''
