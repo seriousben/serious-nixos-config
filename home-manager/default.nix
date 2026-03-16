@@ -6,20 +6,9 @@
   ...
 }:
 let
-  repoPath = "${config.home.homeDirectory}/src/seriousben/serious-nixos-config";
-
-  # Build git hooks directory in the nix store (read-only) so that tools like
-  # lefthook cannot overwrite our hooks via `lefthook install -f`.
-  gitHooksDir = pkgs.runCommand "git-hooks" {} ''
-    mkdir -p $out
-    cp ${./files/git-hooks/pre-commit} $out/pre-commit
-    chmod +x $out/pre-commit
-  '';
-
   scriptsDir = "${config.home.homeDirectory}/src/seriousben/serious-nixos-config/scripts";
 
-  # Named wrapper scripts for launchd agents so they show a descriptive
-  # process name in Activity Monitor instead of "bash".
+  # Named wrapper scripts for launchd agents
   gc-screenshots = pkgs.writeShellScript "gc-screenshots" ''
     exec ${scriptsDir}/cleanup-screenshots.sh --verbose
   '';
@@ -28,296 +17,32 @@ let
   '';
 in
 {
-  home = {
-    enableNixpkgsReleaseCheck = false;
-    sessionVariables = {
-      LANG = "en_US.UTF-8";
-      LC_CTYPE = "en_US.UTF-8";
-      LC_ALL = "en_US.UTF-8";
-    };
-    stateVersion = "23.11";
-  };
+  imports = [ ./user ];
 
-  xdg = {
-    enable = true;
-    cacheHome = "${config.home.homeDirectory}/.cache";
-    configHome = "${config.home.homeDirectory}/.config";
-  };
-
-  # Gitleaks global config
-  xdg.configFile."gitleaks/.gitleaks.toml".source = ./files/gitleaks/.gitleaks.toml;
-
-  # Global git hooks are built into the nix store (see gitHooksDir above)
-  # so they can't be overwritten by tools like lefthook.
-
-  # Nix user-level config — access-tokens for private GitHub flake inputs.
-  # The actual token lives in a separate file (not in the nix store)
-  # created by scripts/setup-nix-github-token.sh (reads from 1Password).
-  xdg.configFile."nix/nix.conf".text = ''
-    !include nix-access-tokens.conf
-  '';
-
-  # Instead, manually create the config file
-  xdg.configFile."ghostty/config" = {
-    text = ''
-      command = /etc/profiles/per-user/seriousben/bin/fish
-      theme = Catppuccin Frappe
-      # keybind = alt+v=esc:v
-      macos-option-as-alt = true
-    '';
-  };
-
-  # Shared agent instructions - AGENTS.md is the source of truth
-  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
-  xdg.configFile."agents/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
-
-  # Claude Code system-level settings
-  home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/claude-settings.json";
-
-  # Pi coding agent configuration
-  home.file.".pi/agent/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/claude/AGENTS.md";
-
-  # Pi settings
-  home.file.".pi/agent/settings.json".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/settings.json";
-
-  # Pi extensions - sourced from various repos, updated via `make update-pi-extensions`
-  home.file.".pi/agent/extensions".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/home-manager/files/pi/extensions";
-
-  # Pi subagent definitions
-  home.file.".pi/agent/agents".source = ./files/pi/agents;
-
-  # Pi skills - from trailofbits/skills-curated (pinned via flake.lock)
-  home.file.".pi/agent/skills/humanizer".source = "${inputs.skills-curated}/plugins/humanizer/skills/humanizer";
-
-  # Pi skills - local
-  home.file.".pi/agent/skills/pi-harness-audit".source = ./files/pi/skills/pi-harness-audit;
-  home.file.".pi/agent/skills/deslop".source = ./files/pi/skills/deslop;
-  home.file.".pi/agent/skills/systematic-debugging".source = ./files/pi/skills/systematic-debugging;
-  home.file.".pi/agent/skills/verify-completion".source = ./files/pi/skills/verify-completion;
-
-  programs.direnv = {
-    enable = true;
-    nix-direnv.enable = true;
-    stdlib = ''
-      # from https://github.com/direnv/direnv/issues/592
-      layout_poetry() {
-        if ! direnv_load poetry run direnv dump; then
-          log_error "failed to enter Poetry env, do you need 'poetry install'?"
-          return 2
-        fi
-      }
-    '';
-  };
-
-  programs.fish = {
-    enable = true;
-    # https://github.com/NixOS/nixpkgs/tree/7eee17a8a5868ecf596bbb8c8beb527253ea8f4d/pkgs/shells/fish/plugins
-    plugins = [
-      {
-        name = "z";
-        src = inputs.fish-z;
-      }
-      {
-        name = "theme-bobthefish";
-        src = inputs.theme-bobthefish;
-      }
-    ];
-
-    interactiveShellInit = lib.strings.concatStrings (
-      lib.strings.intersperse "\n" [
-        (builtins.readFile ./files/config.fish)
-        "set -g SHELL ${pkgs.fish}/bin/fish"
-      ]
-    );
-
-    functions = {
-      command_stress_test = {
-        body = (builtins.readFile ./files/command_stress_test.fish);
-        description = "Stress test a command by running it multiple times.";
-        # arguments
-      };
-    };
-
-    shellAliases = {
-      mage = "go run mage.go --";
-    };
-
-    # FIXME: This is needed to address bug where the $PATH is re-ordered by
-    # the `path_helper` tool, prioritising Apple’s tools over the ones we’ve
-    # installed with nix.
-    #
-    # This gist explains the issue in more detail: https://gist.github.com/Linerre/f11ad4a6a934dcf01ee8415c9457e7b2
-    # There is also an issue open for nix-darwin: https://github.com/LnL7/nix-darwin/issues/122
-    loginShellInit =
-      let
-        # We should probably use `config.environment.profiles`, as described in
-        # https://github.com/LnL7/nix-darwin/issues/122#issuecomment-1659465635
-        # but this takes into account the new XDG paths used when the nix
-        # configuration has `use-xdg-base-directories` enabled. See:
-        # https://github.com/LnL7/nix-darwin/issues/947 for more information.
-        profiles = [
-          "/etc/profiles/per-user/$USER" # Home manager packages
-          "$HOME/.nix-profile"
-          "(set -q XDG_STATE_HOME; and echo $XDG_STATE_HOME; or echo $HOME/.local/state)/nix/profile"
-          "/run/current-system/sw"
-          "/nix/var/nix/profiles/default"
-        ];
-
-        makeBinSearchPath = lib.concatMapStringsSep " " (path: "${path}/bin");
-      in
-      ''
-        # Fix path that was re-ordered by Apple's path_helper
-        fish_add_path --move --prepend --path ${makeBinSearchPath profiles}
-        set fish_user_paths $fish_user_paths
-      '';
-  };
-
-  # https://wiki.nixos.org/wiki/Fish
-  programs.zsh = {
-    enable = true;
-    #
-    # FIXME: vscode cannot get environment variables with exec fish.
-    #        keeping zsh the default and changing terminal to start fish.
-    #
-    # initExtra = ''
-    #   #if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
-    #   then
-    #       exec fish -l
-    #   fi
-    # '';
-  };
-
-  programs.git = {
-    enable = true;
-    signing = {
-      key = "A29A33BE12C39BE2";
-      signByDefault = true;
-    };
-    ignores = lib.strings.intersperse "\n" [
-      (builtins.readFile ./files/gitignore)
-      "# direnv patterns"
-      ".envrc.secrets"
-      "# Tensorlake specifics"
-      "indexify_local_runner_cache"
-      "indexify_storage"
-    ];
-
-    settings = {
-      user = {
-        name = "Benjamin Boudreau";
-        email = "boudreau.benjamin@gmail.com";
-        useConfigOnly = true;
-      };
-      alias = {
-        up = "!git remote update -p; git merge --ff-only @{u}; git submodule update --init";
-        cleanup = "!git branch --merged | grep  -v '\\*\\|main\\|develop\\|master' | xargs -n 1 -r git branch -d";
-        prettylog = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
-        root = "rev-parse --show-toplevel";
-        # We wanna grab those pesky un-added files!
-        # https://git-scm.com/docs/git-stash
-        stash-all = "stash save --include-untracked";
-      };
-      branch.autoSetupRebase = "always";
-      core.askPass = ""; # needs to be empty to use terminal for ask pass
-      core.hooksPath = "${gitHooksDir}";
-      credential.helper = "store"; # want to make this more secure
-      github.user = "seriousben";
-      push.default = "tracking";
-      push.autoSetupRemote = true;
-      init.defaultBranch = "main";
-
-      status = {
-        submoduleSummary = "true";
-        showUntrackedFiles = "all";
-      };
-
-      url = {
-        "git@github.com:" = {
-          pushInsteadOf = "https://github.com/";
-          insteadOf = "https://github.com/";
-        };
-      };
-    };
-  };
-
-  programs.pyenv = {
-    enable = true;
-  };
-
-  #programs.poetry = {
-  #  enable = true;
-  #};
-
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    extraConfig = "
-      set clipboard=unnamedplus
-      colorscheme dracula
-
-      \" Highlight trailing whitespace
-      highlight ExtraWhitespace ctermbg=red guibg=#FF4444
-      match ExtraWhitespace /\\s\\+$/
-
-      \" Auto-remove trailing whitespace on save
-      autocmd BufWritePre * :%s/\\s\\+$//e
-    ";
-    plugins = with pkgs; [
-      vimPlugins.dracula-nvim
-      vimPlugins.nvim-lastplace
-    ];
-  };
-
-  # psql configuration - fish-like history and better data display
-  home.file.".psqlrc" = {
-    text = ''
-      -- History settings (fish-like: no duplicates)
-      \set HISTCONTROL ignoredups
-
-      -- Auto-timing
-      \timing on
-
-      -- Better output formatting for data display
-      \pset null '∅'
-      \pset linestyle unicode
-      \pset border 2
-
-      -- Better paging with horizontal scrolling for wide tables
-      \setenv PAGER 'less -S'
-    '';
-  };
-
+  # macOS-specific: launchd agents
   launchd = {
     enable = true;
     agents = {
-      # Delete screenshots older than 30 days using our custom script.
       gc_screenshots = {
         enable = true;
         config = {
           Program = "${gc-screenshots}";
-          ProgramArguments = [
-            "${gc-screenshots}"
-          ];
+          ProgramArguments = [ "${gc-screenshots}" ];
           RunAtLoad = false;
           KeepAlive = false;
-          startInterval = 2678400; # 31 days.
+          startInterval = 2678400; # 31 days
           StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
         };
       };
-
-      # Organize downloads into monthly folders.
       organize_downloads = {
         enable = true;
         config = {
           Program = "${organize-downloads}";
-          ProgramArguments = [
-            "${organize-downloads}"
-          ];
+          ProgramArguments = [ "${organize-downloads}" ];
           RunAtLoad = false;
           KeepAlive = false;
-          startInterval = 604800; # 7 days (weekly).
+          startInterval = 604800; # 7 days
           StandardErrorPath = "${config.home.homeDirectory}/organize_downloads-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/organize_downloads-stdout.log";
         };
