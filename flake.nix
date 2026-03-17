@@ -1,12 +1,7 @@
 {
-  description = "serious mbp config";
+  description = "serious nix config - user dotfiles and macOS system config";
   inputs = {
-    # Pin our primary nixpkgs repository. This is the main nixpkgs repository
-    # we'll use for our configurations. Be very careful changing this because
-    # it'll impact your entire system.
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-
-    # We use the unstable nixpkgs repo for some packages.
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
@@ -19,9 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
-    };
+    nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     homebrew-bundle = {
       url = "github:homebrew/homebrew-bundle";
       flake = false;
@@ -53,14 +46,10 @@
       flake = false;
     };
 
-    # LLM/AI CLI tools - daily updated packages with binary cache
-    # Note: don't use `inputs.nixpkgs.follows` here — llm-agents pins its own
-    # nixpkgs that it tests against; overriding it can cause nodejs build failures.
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-    };
+    # LLM/AI CLI tools
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
-    # Agent skills - curated skills for AI coding agents
+    # Agent skills
     skills-curated = {
       url = "github:trailofbits/skills-curated";
       flake = false;
@@ -69,6 +58,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-unstable,
       home-manager,
@@ -89,6 +79,7 @@
       };
     in
     {
+      # macOS system configuration
       darwinConfigurations.seriousben-mbp = darwin.lib.darwinSystem {
         inherit pkgs;
         specialArgs = {
@@ -96,9 +87,7 @@
         };
         modules = [
           nix-homebrew.darwinModules.nix-homebrew
-          # https://daiderd.com/nix-darwin/manual/index.html
           ./darwin
-          # https://nix-community.github.io/home-manager/options.xhtml
           home-manager.darwinModules.home-manager
           {
             home-manager = {
@@ -108,10 +97,21 @@
                 inherit inputs;
               };
               users.${user} = ./home-manager;
-              sharedModules = [ ];
             };
           }
         ];
       };
+
+      # Reusable home-manager modules
+      # Usage:
+      #   imports = [ serious-nixos-config.homeModules.user ];
+      #   extraSpecialArgs = { inherit inputs; };
+      homeModules = {
+        user = ./home-manager/user;
+        darwinUser = ./home-manager;
+      };
+
+      # Also expose as nixosModules for consistency
+      nixosModules.user = self.homeModules.user;
     };
 }
