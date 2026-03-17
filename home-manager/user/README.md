@@ -29,6 +29,18 @@ user/
 - **Database**: psql configuration
 - **Agents**: Claude, Pi, and skill configurations
 
+## Options
+
+All options live under `seriousben.user` and default to `true` for backward compatibility with the macOS config.
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `useSymlinks` | `true` | Use out-of-store symlinks to the local repo checkout. Set `false` on remote machines to copy files into the Nix store instead. |
+| `git.gpgSign` | `true` | Enable GPG commit signing. When `false`, `signing.signByDefault` and `signing.key` are omitted. |
+| `git.sshRewrite` | `true` | Rewrite GitHub HTTPS URLs to SSH. When `false`, the `url."git@github.com:"` block is omitted. |
+| `nix.includeAccessTokens` | `true` | Include `nix-access-tokens.conf` in nix.conf. When `false`, the `!include` line is omitted. |
+| `agents.enable` | `true` | Install Claude and Pi agent config files. When `false`, all agent file placements are skipped. |
+
 ## macOS-Specific Additions
 
 The parent `home-manager/default.nix` adds:
@@ -72,6 +84,14 @@ The user module requires these flake inputs:
               homeDirectory = "/home/seriousben";
               stateVersion = "23.11";
             };
+            # VPS overrides: no symlinks, no GPG, no SSH rewrite, no tokens
+            seriousben.user = {
+              useSymlinks = false;
+              git.gpgSign = false;
+              git.sshRewrite = false;
+              nix.includeAccessTokens = false;
+              agents.enable = false;
+            };
           }
         ];
       };
@@ -106,6 +126,14 @@ The user module requires these flake inputs:
               username = "seriousben";
               homeDirectory = "/home/seriousben";
               stateVersion = "23.11";
+            };
+            # VPS overrides: no symlinks, no GPG, no SSH rewrite, no tokens
+            seriousben.user = {
+              useSymlinks = false;
+              git.gpgSign = false;
+              git.sshRewrite = false;
+              nix.includeAccessTokens = false;
+              agents.enable = false;
             };
           }
         ];
