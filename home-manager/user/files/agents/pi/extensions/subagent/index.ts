@@ -251,6 +251,8 @@ async function runSingleAgent(
 	let tmpPromptDir: string | null = null;
 	let tmpPromptPath: string | null = null;
 
+	const diagnostics: string[] = [];
+
 	const currentResult: SingleResult = {
 		agent: agentName,
 		agentSource: agent.source,
@@ -296,6 +298,24 @@ async function runSingleAgent(
 					return;
 				}
 
+				if (event.type === "auto_compaction_start") {
+					diagnostics.push(`compaction started: ${event.reason}`);
+				}
+				if (event.type === "auto_compaction_end") {
+					const parts = [`compaction ended: aborted=${event.aborted} willRetry=${event.willRetry}`];
+					if (event.errorMessage) parts.push(`error=${event.errorMessage}`);
+					if (!event.result) parts.push("result=undefined");
+					diagnostics.push(parts.join(" "));
+				}
+				if (event.type === "auto_retry_start") {
+					diagnostics.push(`retry ${event.attempt}/${event.maxAttempts}: ${event.errorMessage}`);
+				}
+				if (event.type === "auto_retry_end") {
+					const parts = [`retry ended: success=${event.success} attempt=${event.attempt}`];
+					if (event.finalError) parts.push(`error=${event.finalError}`);
+					diagnostics.push(parts.join(" "));
+				}
+
 				if (event.type === "message_end" && event.message) {
 					const msg = event.message as Message;
 					currentResult.messages.push(msg);
@@ -335,12 +355,15 @@ async function runSingleAgent(
 				currentResult.stderr += data.toString();
 			});
 
-			proc.on("close", (code) => {
+			proc.on("close", (code, sig) => {
 				if (buffer.trim()) processLine(buffer);
+				if (sig) diagnostics.push(`process killed by signal: ${sig}`);
+				if (code !== 0 && code !== null) diagnostics.push(`process exited with code: ${code}`);
 				resolve(code ?? 0);
 			});
 
-			proc.on("error", () => {
+			proc.on("error", (err) => {
+				diagnostics.push(`process spawn error: ${err.message}`);
 				resolve(1);
 			});
 
@@ -358,6 +381,11 @@ async function runSingleAgent(
 		});
 
 		currentResult.exitCode = exitCode;
+		if (diagnostics.length > 0 && !currentResult.errorMessage && !currentResult.stderr) {
+			currentResult.stderr = `[diagnostics] ${diagnostics.join(" | ")}`;
+		} else if (diagnostics.length > 0 && currentResult.stderr) {
+			currentResult.stderr += `\n[diagnostics] ${diagnostics.join(" | ")}`;
+		}
 		if (wasAborted) throw new Error("Subagent was aborted");
 		return currentResult;
 	} finally {
