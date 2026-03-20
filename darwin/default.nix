@@ -146,7 +146,7 @@ in
       "elgato-control-center"
 
       # networking
-      "tailscale"
+      "tailscale-app"
 
       # docker / k8s
       "orbstack"

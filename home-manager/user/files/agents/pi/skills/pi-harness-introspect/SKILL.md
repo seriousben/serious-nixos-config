@@ -1,10 +1,11 @@
 ---
-name: pi-harness-audit
+name: pi-harness-introspect
 description: |
   Audit and improve a user's pi coding agent setup. Analyzes session history,
   current AGENTS.md, extensions, and skills, then cross-references community
   repos to propose targeted improvements. Use when asked to review/improve pi
   configuration, suggest new extensions or skills, or optimize the agent harness.
+disable-model-invocation: true
 ---
 
 # Pi Harness Audit
@@ -18,10 +19,10 @@ The pi harness is managed via nix home-manager in this repo (CWD). Changes
 to pi configuration follow the nix workflow, not direct file edits.
 
 **Source of truth:**
-- `home-manager/files/claude/AGENTS.md` -- shared as both `~/.pi/agent/AGENTS.md` and `~/.claude/CLAUDE.md`
-- `home-manager/files/pi/extensions/` -- pi extensions (updated via `make update-pi-extensions`)
-- `home-manager/files/pi/settings.json` -- pi settings
-- `home-manager/default.nix` -- wires files to `~/.pi/agent/` via symlinks
+- `home-manager/user/files/agents/pi/AGENTS.md` -- shared as both `~/.pi/agent/AGENTS.md` and `~/.claude/CLAUDE.md`
+- `home-manager/user/files/agents/pi/extensions/` -- pi extensions
+- `home-manager/user/files/agents/pi/settings.json` -- pi settings
+- `home-manager/user/default.nix` -- wires files to `~/.pi/agent/` via symlinks
 
 **Skills:**
 - Nix-managed skills use flake inputs (e.g. `skills-curated`) and `home.file` entries in `default.nix`
@@ -33,9 +34,8 @@ to pi configuration follow the nix workflow, not direct file edits.
 - Run `make apply` (which runs `darwin-rebuild switch --flake .#seriousben-mbp`)
 - Files are symlinked through the nix store to `~/.pi/agent/`
 
-**Adding new extensions:** Add the `.ts` file to `home-manager/files/pi/extensions/`,
-optionally add a curl line to the `update-pi-extensions` Makefile target if sourced
-from a remote repo, then `make apply`.
+**Adding new extensions:** Add the `.ts` file to `home-manager/user/files/agents/pi/extensions/`,
+then `make apply`. Source repos are listed in `home-manager/user/files/agents/pi/README.md`.
 
 **Adding new skills:** Either place directly in `~/.pi/agent/skills/<name>/SKILL.md`
 for quick use, or add a flake input + `home.file` entry for nix-managed skills.
@@ -52,9 +52,9 @@ Gather what exists before looking at anything else.
 
 ```bash
 # Nix home-manager source files (the actual source of truth)
-ls home-manager/files/pi/extensions/
-ls home-manager/files/pi/settings.json
-cat home-manager/files/claude/AGENTS.md
+ls home-manager/user/files/agents/pi/extensions/
+ls home-manager/user/files/agents/pi/settings.json
+cat home-manager/user/files/agents/pi/AGENTS.md
 
 # What's deployed (symlinks into nix store)
 ls -la ~/.pi/agent/extensions/
@@ -65,9 +65,6 @@ find ~/.pi/agent/skills -name "SKILL.md" 2>/dev/null
 
 # Settings
 cat ~/.pi/agent/settings.json
-
-# Makefile targets for extension management
-grep -A2 "^update-pi-extensions" Makefile
 
 # Flake inputs for skills
 grep -B1 -A3 "skills" flake.nix
@@ -209,34 +206,33 @@ Structure the output as a plan document with:
 If the user approves items from the plan, implement them following the
 nix home-manager workflow:
 
-- **AGENTS.md changes:** Edit `home-manager/files/claude/AGENTS.md` (shared
+- **AGENTS.md changes:** Edit `home-manager/user/files/agents/pi/AGENTS.md` (shared
   with Claude Code). Then `make apply`.
-- **Extensions:** Add `.ts` files to `home-manager/files/pi/extensions/`.
-  If sourced from a remote repo, add a curl line to the `update-pi-extensions`
-  Makefile target. Then `make apply`.
-- **Skills (local):** Add to `home-manager/files/pi/skills/<name>/SKILL.md`
-  and add a `home.file` entry in `home-manager/default.nix` using
-  `./files/pi/skills/<name>`. Then `make apply`.
-  See `pi-harness-audit` as a reference pattern.
+- **Extensions:** Add `.ts` files to `home-manager/user/files/agents/pi/extensions/`.
+  Then `make apply`. Source repos are listed in `home-manager/user/files/agents/pi/README.md`.
+- **Skills (local):** Add to `home-manager/user/files/agents/pi/skills/<name>/SKILL.md`
+  and add a `home.file` entry in `home-manager/user/default.nix` using
+  `./files/agents/pi/skills/<name>`. Then `make apply`.
+  See `pi-harness-introspect` as a reference pattern.
 - **Skills (external repo):** Add a flake input for the source repo and a
-  `home.file` entry in `home-manager/default.nix`, then `make apply`.
+  `home.file` entry in `home-manager/user/default.nix`, then `make apply`.
   See the `humanizer` skill as a reference pattern (uses `skills-curated`
   flake input).
-- **Settings:** Edit `home-manager/files/pi/settings.json`, then `make apply`.
+- **Settings:** Edit `home-manager/user/files/agents/pi/settings.json`, then `make apply`.
 
 ## Pitfalls learned from experience
 
 ### Nix home-manager specifics
 
 - **Don't edit `~/.pi/agent/` files directly.** They are nix store symlinks
-  (read-only). Edit the source in `home-manager/files/` and run `make apply`.
+  (read-only). Edit the source in `home-manager/user/files/agents/pi/` and run `make apply`.
   Exception: AGENTS.md and Claude Code files use `mkOutOfStoreSymlink`
   (editable live symlinks to the repo). Everything else is a nix store copy.
 - **AGENTS.md is CLAUDE.md.** The pi AGENTS.md and Claude Code CLAUDE.md are
-  the same file (`home-manager/files/claude/AGENTS.md`). Any change affects
+  the same file (`home-manager/user/files/agents/pi/AGENTS.md`). Any change affects
   both harnesses. Write harness-agnostic instructions.
 - **Extensions and skills are nix store copies.** After editing source files
-  in `home-manager/files/`, `make apply` is required for changes to deploy.
+  in `home-manager/user/files/agents/pi/`, `make apply` is required for changes to deploy.
 - **Flake inputs for skills are pinned.** The `skills-curated` input is pinned
   in `flake.lock`. Run `nix flake update skills-curated` to get newer versions.
 

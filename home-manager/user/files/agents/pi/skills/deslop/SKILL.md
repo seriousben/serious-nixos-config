@@ -4,6 +4,7 @@ description: |
   Remove AI-generated code slop from recent changes. Use after implementation
   to clean up extra comments, unnecessary defensive code, type casts, and style
   inconsistencies introduced by the agent. Run before committing.
+disable-model-invocation: true
 ---
 
 # Deslop: Remove AI Code Artifacts

@@ -72,7 +72,7 @@ in
         type = lib.types.bool;
         default = true;
         description = ''
-          Install Claude and Pi agent configuration files.
+          Install Pi agent configuration files.
           Disable on machines that don't need agent configs.
         '';
       };
@@ -284,33 +284,14 @@ in
 
     # ── Agent configs ──────────────────────────────────────────────────
     (lib.mkIf cfg.agents.enable {
-      # Claude Code
-      home.file.".claude/CLAUDE.md".source =
-        mkFileSource ./files/agents/claude/AGENTS.md "home-manager/user/files/agents/claude/AGENTS.md";
-      xdg.configFile."agents/AGENTS.md".source =
-        mkFileSource ./files/agents/claude/AGENTS.md "home-manager/user/files/agents/claude/AGENTS.md";
-      home.file.".claude/settings.json".source =
-        mkFileSource ./files/agents/claude/claude-settings.json "home-manager/user/files/agents/claude/claude-settings.json";
-
-      # Pi configuration
       home.file.".pi/agent/AGENTS.md".source =
-        mkFileSource ./files/agents/claude/AGENTS.md "home-manager/user/files/agents/claude/AGENTS.md";
+        mkFileSource ./files/agents/pi/AGENTS.md "home-manager/user/files/agents/pi/AGENTS.md";
       home.file.".pi/agent/settings.json".source =
         mkFileSource ./files/agents/pi/settings.json "home-manager/user/files/agents/pi/settings.json";
       home.file.".pi/agent/extensions".source =
         mkFileSource ./files/agents/pi/extensions "home-manager/user/files/agents/pi/extensions";
-
-      # These are always store copies (no local editing needed)
       home.file.".pi/agent/agents".source = ./files/agents/pi/agents;
-
-      # Pi skills - from trailofbits/skills-curated (flake input)
-      home.file.".pi/agent/skills/humanizer".source = "${inputs.skills-curated}/plugins/humanizer/skills/humanizer";
-
-      # Pi skills - local
-      home.file.".pi/agent/skills/pi-harness-audit".source = ./files/agents/pi/skills/pi-harness-audit;
-      home.file.".pi/agent/skills/deslop".source = ./files/agents/pi/skills/deslop;
-      home.file.".pi/agent/skills/systematic-debugging".source = ./files/agents/pi/skills/systematic-debugging;
-      home.file.".pi/agent/skills/verify-completion".source = ./files/agents/pi/skills/verify-completion;
+      home.file.".pi/agent/skills".source = ./files/agents/pi/skills;
     })
   ];
 }

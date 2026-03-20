@@ -45,32 +45,36 @@ Example usage (just tell the agent what you want):
 | `deslop` | `/skill:deslop` | Remove AI code slop from diffs (comments, defensive code, `any` casts) |
 | `systematic-debugging` | `/skill:systematic-debugging` or auto | 4-phase root-cause-first debugging protocol |
 | `verify-completion` | `/skill:verify-completion` or auto | No completion claims without running verification |
-| `pi-harness-audit` | `/skill:pi-harness-audit` | Audit pi setup against session history and community repos |
+| `pi-harness-introspect` | `/skill:pi-harness-introspect` | Audit pi setup against session history and community repos |
+| `pi-customize` | auto | Guides adding skills and customization, global or per-repo |
 
 Skills marked "or auto" may be loaded automatically when the agent recognizes a matching task from the description.
 
 ## File Layout
 
 ```
-home-manager/files/pi/
+home-manager/user/files/agents/pi/
 ├── agents/              # .md files → ~/.pi/agent/agents/
 ├── extensions/          # .ts files → ~/.pi/agent/extensions/
 ├── skills/              # SKILL.md dirs → ~/.pi/agent/skills/
 ├── settings.json        # → ~/.pi/agent/settings.json
+├── AGENTS.md            # → ~/.pi/agent/AGENTS.md
 └── README.md            # this file
 ```
-
-AGENTS.md lives at `home-manager/files/claude/AGENTS.md` (shared with Claude Code as `~/.claude/CLAUDE.md`).
 Humanizer skill comes from `trailofbits/skills-curated` flake input.
 
-## Credits
+## Sources
 
 Extensions and skills adapted from:
 
-- [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) — review, answer, notify
-- [badlogic/pi-mono](https://github.com/badlogic/pi-mono) — subagent, handoff, permission-gate
-- [tmustier/pi-extensions](https://github.com/tmustier/pi-extensions) — raw-paste, tab-status
-- [butttons/pi-kit](https://github.com/butttons/pi-kit) — verbosity-leash
+- [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) — review, answer, notify, context, todos, multi-edit, files, loop, session-breakdown
+- [badlogic/pi-mono](https://github.com/badlogic/pi-mono) — handoff, permission-gate, protected-paths (official examples)
+- [tmustier/pi-extensions](https://github.com/tmustier/pi-extensions) — raw-paste, tab-status, files-widget, skill-creator
+- [butttons/pi-kit](https://github.com/butttons/pi-kit) — verbosity-leash, explore-guard, safe-commit, auto-commit-nudge, session-recall, thinking-stash, plan-mode, dora
 - [trailofbits/skills-curated](https://github.com/trailofbits/skills-curated) — humanizer skill
-
-Review guidelines influenced by [HazAT/pi-config](https://github.com/HazAT/pi-config).
+- [obra/superpowers](https://github.com/obra/superpowers) — systematic-debugging, verify-completion, test-driven-development, writing-plans, executing-plans, subagent-driven-development
+- [laulauland/dotfiles](https://github.com/laulauland/dotfiles) — deslop, commit, pr commands, librarian/simplifier agents, agent-browser skill
+- [HazAT/pi-config](https://github.com/HazAT/pi-config) — session-artifacts, cost tracking, watchdog, cmux, panel-agents, planner/reviewer/worker agents
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — specialized review agents (code-simplicity, security, architecture, data-migration), git-history-analyzer
+- [prateekmedia/pi-hooks](https://github.com/prateekmedia/pi-hooks) — checkpoint, lsp diagnostics, repeat
+- [ben-vargas/pi-packages](https://github.com/ben-vargas/pi-packages) — stack trace trimming, ancestor discovery, exa search, firecrawl

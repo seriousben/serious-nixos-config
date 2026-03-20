@@ -2,6 +2,7 @@
 name: mcpc
 description: Use mcpc CLI to interact with MCP servers - call tools, read resources, get prompts. Use this when working with Model Context Protocol servers, calling MCP tools, or accessing MCP resources programmatically.
 allowed-tools: Bash(mcpc:*), Bash(node dist/cli/index.js:*), Read, Grep
+disable-model-invocation: true
 ---
 
 # mcpc: MCP command-line client
