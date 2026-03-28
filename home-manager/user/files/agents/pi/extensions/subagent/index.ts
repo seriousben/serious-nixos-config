@@ -28,6 +28,20 @@ const MAX_PARALLEL_TASKS = 8;
 const MAX_CONCURRENCY = 4;
 const COLLAPSED_ITEM_COUNT = 10;
 
+function formatDuration(ms: number): string {
+	return `${(ms / 1000).toFixed(1)}s`;
+}
+
+function formatTiming(r: SingleResult, themeFg: (color: any, text: string) => string): string {
+	if (!r.startedAt) return "";
+	const isRunning = r.exitCode === -1;
+	const endTime = r.endedAt ?? Date.now();
+	const label = isRunning ? "Elapsed" : "Took";
+	let text = themeFg("muted", `${label} ${formatDuration(endTime - r.startedAt)}`);
+	if (r.timeoutSeconds) text += themeFg("dim", ` (timeout ${r.timeoutSeconds}s)`);
+	return text;
+}
+
 function formatTokens(count: number): string {
 	if (count < 1000) return count.toString();
 	if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
@@ -151,6 +165,9 @@ interface SingleResult {
 	stopReason?: string;
 	errorMessage?: string;
 	step?: number;
+	startedAt?: number;
+	endedAt?: number;
+	timeoutSeconds?: number;
 }
 
 interface SubagentDetails {
@@ -227,6 +244,7 @@ async function runSingleAgent(
 	signal: AbortSignal | undefined,
 	onUpdate: OnUpdateCallback | undefined,
 	makeDetails: (results: SingleResult[]) => SubagentDetails,
+	timeoutSeconds?: number,
 ): Promise<SingleResult> {
 	const agent = agents.find((a) => a.name === agentName);
 
@@ -257,12 +275,14 @@ async function runSingleAgent(
 		agent: agentName,
 		agentSource: agent.source,
 		task,
-		exitCode: 0,
+		exitCode: -1,
 		messages: [],
 		stderr: "",
 		usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
 		model: agent.model,
 		step,
+		startedAt: Date.now(),
+		timeoutSeconds: timeoutSeconds,
 	};
 
 	const emitUpdate = () => {
@@ -274,6 +294,13 @@ async function runSingleAgent(
 		}
 	};
 
+	let wasAborted = false;
+	let wasTimedOut = false;
+
+	// Compose caller signal with optional timeout into a single abort controller
+	const timeoutController = new AbortController();
+	let timeoutTimer: ReturnType<typeof setTimeout> | undefined;
+
 	try {
 		if (agent.systemPrompt.trim()) {
 			const tmp = writePromptToTempFile(agent.name, agent.systemPrompt);
@@ -283,7 +310,23 @@ async function runSingleAgent(
 		}
 
 		args.push(`Task: ${task}`);
-		let wasAborted = false;
+
+		if (timeoutSeconds && timeoutSeconds > 0) {
+			timeoutTimer = setTimeout(() => {
+				wasTimedOut = true;
+				timeoutController.abort();
+			}, timeoutSeconds * 1000);
+		}
+
+		if (signal) {
+			if (signal.aborted) {
+				timeoutController.abort();
+			} else {
+				signal.addEventListener("abort", () => timeoutController.abort(), { once: true });
+			}
+		}
+
+		const effectiveSignal = timeoutController.signal;
 
 		const exitCode = await new Promise<number>((resolve) => {
 			const proc = spawn("pi", args, { cwd: cwd ?? defaultCwd, shell: false, stdio: ["ignore", "pipe", "pipe"] });
@@ -367,7 +410,7 @@ async function runSingleAgent(
 				resolve(1);
 			});
 
-			if (signal) {
+			{
 				const killProc = () => {
 					wasAborted = true;
 					proc.kill("SIGTERM");
@@ -375,20 +418,30 @@ async function runSingleAgent(
 						if (!proc.killed) proc.kill("SIGKILL");
 					}, 5000);
 				};
-				if (signal.aborted) killProc();
-				else signal.addEventListener("abort", killProc, { once: true });
+				if (effectiveSignal.aborted) killProc();
+				else effectiveSignal.addEventListener("abort", killProc, { once: true });
 			}
 		});
 
+		if (timeoutTimer) clearTimeout(timeoutTimer);
+
+		currentResult.endedAt = Date.now();
 		currentResult.exitCode = exitCode;
 		if (diagnostics.length > 0 && !currentResult.errorMessage && !currentResult.stderr) {
 			currentResult.stderr = `[diagnostics] ${diagnostics.join(" | ")}`;
 		} else if (diagnostics.length > 0 && currentResult.stderr) {
 			currentResult.stderr += `\n[diagnostics] ${diagnostics.join(" | ")}`;
 		}
+		if (wasTimedOut) {
+			currentResult.stopReason = "timeout";
+			currentResult.errorMessage = `Agent timed out after ${timeoutSeconds}s`;
+			// Return partial result instead of throwing so the caller gets output collected so far
+			return currentResult;
+		}
 		if (wasAborted) throw new Error("Subagent was aborted");
 		return currentResult;
 	} finally {
+		if (timeoutTimer) clearTimeout(timeoutTimer);
 		if (tmpPromptPath)
 			try {
 				fs.unlinkSync(tmpPromptPath);
@@ -408,12 +461,14 @@ const TaskItem = Type.Object({
 	agent: Type.String({ description: "Name of the agent to invoke" }),
 	task: Type.String({ description: "Task to delegate to the agent" }),
 	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process" })),
+	timeout: Type.Optional(Type.Number({ description: "Timeout in seconds. Agent is killed if it exceeds this." })),
 });
 
 const ChainItem = Type.Object({
 	agent: Type.String({ description: "Name of the agent to invoke" }),
 	task: Type.String({ description: "Task with optional {previous} placeholder for prior output" }),
 	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process" })),
+	timeout: Type.Optional(Type.Number({ description: "Timeout in seconds. Agent is killed if it exceeds this." })),
 });
 
 const AgentScopeSchema = StringEnum(["user", "project", "both"] as const, {
@@ -431,6 +486,7 @@ const SubagentParams = Type.Object({
 		Type.Boolean({ description: "Prompt before running project-local agents. Default: true.", default: true }),
 	),
 	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process (single mode)" })),
+	timeout: Type.Optional(Type.Number({ description: "Timeout in seconds. Agent is killed if it exceeds this. (single mode)" })),
 });
 
 export default function (pi: ExtensionAPI) {
@@ -442,6 +498,8 @@ export default function (pi: ExtensionAPI) {
 			"Modes: single (agent + task), parallel (tasks array), chain (sequential with {previous} placeholder).",
 			'Default agent scope is "user" (from ~/.pi/agent/agents).',
 			'To enable project-local agents in .pi/agents, set agentScope: "both" (or "project").',
+			"Optional timeout (seconds) per task; agent is killed and partial output returned if exceeded.",
+			"Set timeouts to avoid runaway tasks. Verify subagent output before moving on.",
 		].join(" "),
 		parameters: SubagentParams,
 
@@ -536,6 +594,7 @@ export default function (pi: ExtensionAPI) {
 						signal,
 						chainUpdate,
 						makeDetails("chain"),
+						step.timeout,
 					);
 					results.push(result);
 
@@ -616,6 +675,7 @@ export default function (pi: ExtensionAPI) {
 							}
 						},
 						makeDetails("parallel"),
+						t.timeout,
 					);
 					allResults[index] = result;
 					emitParallelUpdate();
@@ -650,6 +710,7 @@ export default function (pi: ExtensionAPI) {
 					signal,
 					onUpdate,
 					makeDetails("single"),
+					params.timeout,
 				);
 				const isError = result.exitCode !== 0 || result.stopReason === "error" || result.stopReason === "aborted";
 				if (isError) {
@@ -781,9 +842,10 @@ export default function (pi: ExtensionAPI) {
 						}
 					}
 					const usageStr = formatUsageStats(r.usage, r.model);
-					if (usageStr) {
+					const timingStr = formatTiming(r, theme.fg.bind(theme));
+					if (usageStr || timingStr) {
 						container.addChild(new Spacer(1));
-						container.addChild(new Text(theme.fg("dim", usageStr), 0, 0));
+						container.addChild(new Text([timingStr, theme.fg("dim", usageStr)].filter(Boolean).join("  "), 0, 0));
 					}
 					return container;
 				}
@@ -797,7 +859,8 @@ export default function (pi: ExtensionAPI) {
 					if (displayItems.length > COLLAPSED_ITEM_COUNT) text += `\n${theme.fg("muted", "(Ctrl+O to expand)")}`;
 				}
 				const usageStr = formatUsageStats(r.usage, r.model);
-				if (usageStr) text += `\n${theme.fg("dim", usageStr)}`;
+				const timingStr = formatTiming(r, theme.fg.bind(theme));
+				if (usageStr || timingStr) text += `\n${[timingStr, theme.fg("dim", usageStr)].filter(Boolean).join("  ")}`;
 				return new Text(text, 0, 0);
 			}
 
@@ -866,7 +929,8 @@ export default function (pi: ExtensionAPI) {
 						}
 
 						const stepUsage = formatUsageStats(r.usage, r.model);
-						if (stepUsage) container.addChild(new Text(theme.fg("dim", stepUsage), 0, 0));
+						const stepTiming = formatTiming(r, theme.fg.bind(theme));
+						if (stepUsage || stepTiming) container.addChild(new Text([stepTiming, theme.fg("dim", stepUsage)].filter(Boolean).join("  "), 0, 0));
 					}
 
 					const usageStr = formatUsageStats(aggregateUsage(details.results));
@@ -889,6 +953,8 @@ export default function (pi: ExtensionAPI) {
 					text += `\n\n${theme.fg("muted", `─── Step ${r.step}: `)}${theme.fg("accent", r.agent)} ${rIcon}`;
 					if (displayItems.length === 0) text += `\n${theme.fg("muted", "(no output)")}`;
 					else text += `\n${renderDisplayItems(displayItems, 5)}`;
+					const stepTiming = formatTiming(r, theme.fg.bind(theme));
+					if (stepTiming) text += `\n${stepTiming}`;
 				}
 				const usageStr = formatUsageStats(aggregateUsage(details.results));
 				if (usageStr) text += `\n\n${theme.fg("dim", `Total: ${usageStr}`)}`;
@@ -951,7 +1017,8 @@ export default function (pi: ExtensionAPI) {
 						}
 
 						const taskUsage = formatUsageStats(r.usage, r.model);
-						if (taskUsage) container.addChild(new Text(theme.fg("dim", taskUsage), 0, 0));
+						const taskTiming = formatTiming(r, theme.fg.bind(theme));
+						if (taskUsage || taskTiming) container.addChild(new Text([taskTiming, theme.fg("dim", taskUsage)].filter(Boolean).join("  "), 0, 0));
 					}
 
 					const usageStr = formatUsageStats(aggregateUsage(details.results));
@@ -976,6 +1043,8 @@ export default function (pi: ExtensionAPI) {
 					if (displayItems.length === 0)
 						text += `\n${theme.fg("muted", r.exitCode === -1 ? "(running...)" : "(no output)")}`;
 					else text += `\n${renderDisplayItems(displayItems, 5)}`;
+					const rTiming = formatTiming(r, theme.fg.bind(theme));
+					if (rTiming) text += `\n${rTiming}`;
 				}
 				if (!isRunning) {
 					const usageStr = formatUsageStats(aggregateUsage(details.results));

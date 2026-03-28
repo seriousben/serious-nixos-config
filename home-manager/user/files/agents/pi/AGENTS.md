@@ -144,6 +144,10 @@ When asked to create a plan and no other planning process is defined, use this d
 
 **Important:** Never reference `seriousben-agent-plans/` or any of its contents in committed code, comments, commit messages, PRs, or any other artifacts that leave the local workspace. This directory is strictly for internal agent use only.
 
+## Subagent Usage
+
+Delegate implementation work to subagents. Keep the main agent focused on orchestration, verification, and responding to user steering. This preserves context window for high-value decisions.
+
 ## When in Doubt
 
 - Choose the simpler approach

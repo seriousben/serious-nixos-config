@@ -123,6 +123,15 @@ const REVIEW_RUBRIC = `# Review Guidelines
 
 Use Conventional Comments: \`issue (blocking):\`, \`suggestion (non-blocking):\`, \`nitpick:\`.
 
+## Apply Project Standards
+
+Before reviewing, check for project conventions:
+
+- Read AGENTS.md or CLAUDE.md at the repo root for coding standards
+- Judge code against the project's own patterns, not generic preferences
+- Respect the project's established error handling, naming, and abstraction choices
+- Flag deviations from project conventions, not just personal style preferences
+
 ## Core Principles
 
 - Be direct. If code has problems, say so clearly.

@@ -42,7 +42,8 @@ Example usage (just tell the agent what you want):
 | Skill | Trigger | What it does |
 |-------|---------|--------------|
 | `humanizer` | `/skill:humanizer` | Remove AI writing patterns from prose |
-| `deslop` | `/skill:deslop` | Remove AI code slop from diffs (comments, defensive code, `any` casts) |
+| `code-simplifier` | `/skill:code-simplifier` or auto | Simplify recently modified code for clarity and maintainability |
+| `deslop` | `/skill:deslop` or auto | Remove AI code slop from diffs (comments, defensive code, `any` casts) |
 | `systematic-debugging` | `/skill:systematic-debugging` or auto | 4-phase root-cause-first debugging protocol |
 | `verify-completion` | `/skill:verify-completion` or auto | No completion claims without running verification |
 | `pi-harness-introspect` | `/skill:pi-harness-introspect` | Audit pi setup against session history and community repos |
@@ -65,6 +66,8 @@ Humanizer skill comes from `trailofbits/skills-curated` flake input.
 
 ## Sources
 
+- [seriousben/pi-extensions star list](https://github.com/stars/seriousben/lists/pi-extensions) — curated list of extension repos to watch
+
 Extensions and skills adapted from:
 
 - [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) — review, answer, notify, context, todos, multi-edit, files, loop, session-breakdown
@@ -74,7 +77,8 @@ Extensions and skills adapted from:
 - [trailofbits/skills-curated](https://github.com/trailofbits/skills-curated) — humanizer skill
 - [obra/superpowers](https://github.com/obra/superpowers) — systematic-debugging, verify-completion, test-driven-development, writing-plans, executing-plans, subagent-driven-development
 - [laulauland/dotfiles](https://github.com/laulauland/dotfiles) — deslop, commit, pr commands, librarian/simplifier agents, agent-browser skill
-- [HazAT/pi-config](https://github.com/HazAT/pi-config) — session-artifacts, cost tracking, watchdog, cmux, panel-agents, planner/reviewer/worker agents
+- [HazAT/pi-config](https://github.com/HazAT/pi-config) — session-artifacts, cost tracking, watchdog, cmux, panel-agents, planner/reviewer/worker agents, code-simplifier skill
+- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — code-simplifier (upstream source)
 - [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — specialized review agents (code-simplicity, security, architecture, data-migration), git-history-analyzer
 - [prateekmedia/pi-hooks](https://github.com/prateekmedia/pi-hooks) — checkpoint, lsp diagnostics, repeat
 - [ben-vargas/pi-packages](https://github.com/ben-vargas/pi-packages) — stack trace trimming, ancestor discovery, exa search, firecrawl

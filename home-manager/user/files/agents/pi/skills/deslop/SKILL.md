@@ -1,9 +1,10 @@
 ---
 name: deslop
 description: |
-  Remove AI-generated code slop from recent changes. Use after implementation
-  to clean up extra comments, unnecessary defensive code, type casts, and style
-  inconsistencies introduced by the agent. Run before committing.
+  Remove AI-generated code slop from recent changes. Use after completing a
+  coding task, before committing. Cleans up extra comments, unnecessary
+  defensive code, type casts, and style inconsistencies introduced by the
+  agent. Should auto-trigger when implementation is done and ready to commit.
 disable-model-invocation: true
 ---
 

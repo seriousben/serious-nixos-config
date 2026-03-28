@@ -179,6 +179,12 @@ in
 
       programs.zsh = {
         enable = true;
+        initContent = ''
+          if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
+          then
+              exec fish -l
+          fi
+        '';
       };
 
       programs.git = {
