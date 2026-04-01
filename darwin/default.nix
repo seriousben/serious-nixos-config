@@ -88,6 +88,7 @@ in
       "homebrew/bundle" = inputs.homebrew-bundle;
       "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
       "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
+      "stainless-api/homebrew-tap" = inputs.stainless-api-tap;
     };
     mutableTaps = true;
     autoMigrate = true;
@@ -144,6 +145,9 @@ in
       # office setup
       "shureplus-motiv"
       "elgato-control-center"
+
+      # Stainless API
+      { name = "stainless-api/tap/stl"; args = { no_quarantine = false; }; }
 
       # networking
       "tailscale-app"

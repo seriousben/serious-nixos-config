@@ -1,7 +1,7 @@
 {
   "enableSkillCommands": true,
   "lastChangelogVersion": "0.64.0",
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-6"
 }

@@ -35,6 +35,10 @@
       url = "github:seriousben/homebrew-tiltbar";
       flake = false;
     };
+    stainless-api-tap = {
+      url = "github:stainless-api/homebrew-tap";
+      flake = false;
+    };
 
     # Fish shell plugins
     theme-bobthefish = {
