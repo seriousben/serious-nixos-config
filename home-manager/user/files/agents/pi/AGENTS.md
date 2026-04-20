@@ -72,6 +72,14 @@ When the task involves:
 
 When uncertain about scope, stop and ask.
 
+## Opportunistic Cleanup
+
+When you encounter pre-existing issues while working:
+- **Lint warnings/errors:** Fix them in any file you touch.
+- **Build or test errors:** Fix them even if unrelated to your change. The build and tests must pass.
+- **Style violations:** Fix them only when you are already changing code nearby (same function or adjacent lines). Do not go hunting through the file.
+- **Minor bugs:** Do not fix them silently. Raise them to the user as a separate observation.
+
 ## Workflow Guidelines
 
 **Making Changes:**

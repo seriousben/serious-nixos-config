@@ -89,6 +89,8 @@ in
       "tilt-dev/homebrew-tap" = inputs.tilt-dev-tap;
       "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
       "stainless-api/homebrew-tap" = inputs.stainless-api-tap;
+      "keycardai/homebrew-tap" = inputs.keycard-tap;
+
     };
     mutableTaps = true;
     autoMigrate = true;
@@ -102,13 +104,14 @@ in
       cleanup = "zap";
     };
 
-    # https://daiderd.com/nix-darwin/manual/index.html#opt-homebrew.caskArgs.no_quarantine
-    caskArgs.no_quarantine = true;
     global.brewfile = true;
 
-    #masApps = { };
+    taps = [
+      "keycardai/tap"
+      "stainless-api/tap"
+    ];
 
-    # Taps are already defined in nix-homebrew.taps above
+    #masApps = { };
 
     brews = [
       "azure-cli"
@@ -120,6 +123,7 @@ in
       "seriousben/tiltbar/tiltbar"
     ];
     casks = [
+      "keycardai/tap/keycard"
       "1password"
       "discord"
       "firefox@developer-edition"
@@ -147,7 +151,7 @@ in
       "elgato-control-center"
 
       # Stainless API
-      { name = "stainless-api/tap/stl"; args = { no_quarantine = false; }; }
+      "stainless-api/tap/stl"
 
       # networking
       "tailscale-app"

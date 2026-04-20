@@ -39,6 +39,11 @@
       url = "github:stainless-api/homebrew-tap";
       flake = false;
     };
+    keycard-tap = {
+      url = "github:keycardai/homebrew-tap";
+      flake = false;
+    };
+
 
     # Fish shell plugins
     theme-bobthefish = {
@@ -80,6 +85,17 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        # Workaround for aarch64-darwin codesigning bug (nixpkgs#208951 / #507531):
+        # fish binaries from the binary cache occasionally have invalid ad-hoc
+        # signatures on Apple Silicon. Forcing a local rebuild ensures codesigning
+        # is applied on this machine with a valid signature.
+        overlays = [
+          (_final: prev: {
+            fish = prev.fish.overrideAttrs (_old: {
+              NIX_FORCE_LOCAL_REBUILD = "darwin-codesign-fix";
+            });
+          })
+        ];
       };
     in
     {
