@@ -111,7 +111,9 @@ in
       "stainless-api/tap"
     ];
 
-    #masApps = { };
+    masApps = {
+      "Xcode" = 497799835;
+    };
 
     brews = [
       "azure-cli"

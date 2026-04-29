@@ -185,13 +185,28 @@ function update_repo
 end
 
 function update_repos
-    for dir in (find . -maxdepth 1 -type d)
-        if test -d "$dir/.git"
-            pushd "$dir"
-            update_repo (basename "$dir")
-            prevd
+    set -l tmpdir (mktemp -d)
+    set -l func_file "$tmpdir/_func.fish"
+    functions update_repo > "$func_file"
+
+    set -l dirs (find . -maxdepth 1 -type d -exec test -d '{}/.git' ';' -print | sort)
+
+    printf '%s\n' $dirs \
+        | xargs -P8 -I{} fish -c "
+            source $func_file
+            set -l name (basename {})
+            cd {}
+            update_repo \$name > $tmpdir/\$name.out 2>&1
+        "
+
+    for dir in $dirs
+        set -l name (basename "$dir")
+        if test -f "$tmpdir/$name.out"
+            cat "$tmpdir/$name.out"
         end
     end
+
+    rm -rf $tmpdir
 end
 
 function op_apply
