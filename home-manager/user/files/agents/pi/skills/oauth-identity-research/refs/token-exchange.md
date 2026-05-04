@@ -16,24 +16,43 @@ curl -X POST https://auth.example.com/token \
   -d "audience=https://service-b.example.com"
 ```
 
-**When to use:** Microservices with user context, multi-IdP companies, format conversion (OAuth/SAML/OIDC).
+**Delegation vs impersonation:**
+
+- **Impersonation** — New token has the original user as `sub`. No trace of the intermediary. Resource server can't tell Service A is involved.
+- **Delegation** — New token includes an `act` (actor) claim identifying the intermediary. Resource server sees both the user and who is acting on their behalf.
+
+**The `act` claim (registered JWT claim):**
+
+Nestable claim that identifies the acting party in a delegation chain. Each `act` contains a `sub` (and optionally `iss`) for the actor, and can itself contain another `act` for multi-hop delegation.
+
+```json
+{
+  "sub": "user-123",
+  "act": {
+    "sub": "service-a",
+    "iss": "https://auth.example.com",
+    "act": {
+      "sub": "gateway-proxy",
+      "iss": "https://auth.example.com"
+    }
+  }
+}
+```
+
+Reads as: gateway-proxy acted on behalf of service-a, which acted on behalf of user-123.
+
+Also defines `may_act` — an optional claim in the subject token that pre-authorizes specific actors. AS checks `may_act` before issuing a delegation token.
+
+**Registered token type URIs:**
+- `urn:ietf:params:oauth:token-type:access_token`
+- `urn:ietf:params:oauth:token-type:refresh_token`
+- `urn:ietf:params:oauth:token-type:id_token`
+- `urn:ietf:params:oauth:token-type:saml1`
+- `urn:ietf:params:oauth:token-type:saml2`
+- `urn:ietf:params:oauth:token-type:jwt`
+
+**When to use:** Microservices with user context, multi-IdP companies, format conversion (OAuth/SAML/OIDC). The `act` claim is the foundation for all delegation chain specs (Entity Profiles, Actor Profile, Transaction Tokens).
 
 **Provider support:** Okta (On-Behalf-Of), Auth0 (Custom Token Exchange).
 
-## Token Exchange Target Service Discovery (draft)
-
-**Problem:** Clients must hardcode service lists and handle access errors. No way to ask "what can I exchange my token for?"
-
-**Mechanism:** Client queries authorization server with current token, server returns available exchange targets with scopes, client exchanges for specific service.
-
-**Example:**
-
-```bash
-curl -X POST https://auth.example.com/token-exchange-targets \
-  -d '{"subject_token": "eyJhbGc...", "subject_token_type": "urn:ietf:params:oauth:token-type:access_token"}'
-# Response: {"targets": [{"audience": "https://payment.example.com", "scope": "payment:initiate"}]}
-```
-
-**When to use:** Dynamic service catalogs, mobile apps that show only accessible features.
-
-**Links:** [RFC 8693](https://www.rfc-editor.org/rfc/rfc8693.html), [Discovery draft](https://datatracker.ietf.org/doc/draft-mcguinness-token-xchg-target-svc-disco/)
+**Link:** [RFC 8693](https://www.rfc-editor.org/rfc/rfc8693.html)

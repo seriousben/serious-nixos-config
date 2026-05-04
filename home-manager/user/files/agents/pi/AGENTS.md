@@ -152,6 +152,17 @@ When asked to create a plan and no other planning process is defined, use this d
 
 **Important:** Never reference `seriousben-agent-plans/` or any of its contents in committed code, comments, commit messages, PRs, or any other artifacts that leave the local workspace. This directory is strictly for internal agent use only.
 
+## Estimation
+
+Never estimate in hours or time units. Use T-shirt sizes to convey complexity/effort:
+
+- **S** — Small, well-understood change. Single file or straightforward fix.
+- **M** — Medium. A few files, some design thought needed.
+- **L** — Large. Multiple files or components, requires a plan.
+- **XL** — Extra large. Cross-cutting, multi-system, needs an RFC.
+
+When presenting plans, label each step with a size. When asked "how long" or "how big", answer with a T-shirt size, not a time estimate.
+
 ## Subagent Usage
 
 Delegate implementation work to subagents. Keep the main agent focused on orchestration, verification, and responding to user steering. This preserves context window for high-value decisions.
