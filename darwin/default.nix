@@ -32,6 +32,7 @@ in
       nixfmt-rfc-style
 
       # development
+      just
       direnv
       _1password-cli
       awscli2
