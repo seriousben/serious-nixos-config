@@ -43,6 +43,10 @@
       url = "github:keycardai/homebrew-tap";
       flake = false;
     };
+    manaflow-cmux-tap = {
+      url = "github:manaflow-ai/homebrew-cmux";
+      flake = false;
+    };
 
 
     # Fish shell plugins

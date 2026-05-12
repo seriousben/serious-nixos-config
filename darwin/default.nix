@@ -91,6 +91,7 @@ in
       "seriousben/homebrew-tiltbar" = inputs.tiltbar-tap;
       "stainless-api/homebrew-tap" = inputs.stainless-api-tap;
       "keycardai/homebrew-tap" = inputs.keycard-tap;
+      "manaflow-ai/homebrew-cmux" = inputs.manaflow-cmux-tap;
 
     };
     mutableTaps = true;
@@ -110,6 +111,7 @@ in
     taps = [
       "keycardai/tap"
       "stainless-api/tap"
+      "manaflow-ai/cmux"
     ];
 
     masApps = {
@@ -147,7 +149,7 @@ in
       # Work
       "granola"
       "loom"
-      "linear-linear"
+      "linear"
 
       # office setup
       "shureplus-motiv"
@@ -161,6 +163,9 @@ in
 
       # docker / k8s
       "orbstack"
+
+      # manaflow
+      "manaflow-ai/cmux/cmux"
     ];
   };
   #services.nix-daemon.enable = true;
