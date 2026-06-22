@@ -167,6 +167,19 @@ in
       # manaflow
       "manaflow-ai/cmux/cmux"
     ];
+
+    # Homebrew 6.0 requires non-official taps to be explicitly trusted before
+    # their Ruby is evaluated, otherwise `brew bundle` refuses to load their
+    # formulae and casks. The nix-darwin homebrew module has no `trusted`
+    # option yet, so inject `trusted: true` tap entries via extraConfig. These
+    # are appended to the generated Brewfile (duplicate tap lines are harmless).
+    extraConfig = ''
+      tap "tilt-dev/tap", trusted: true
+      tap "seriousben/tiltbar", trusted: true
+      tap "keycardai/tap", trusted: true
+      tap "stainless-api/tap", trusted: true
+      tap "manaflow-ai/cmux", trusted: true
+    '';
   };
   #services.nix-daemon.enable = true;
 

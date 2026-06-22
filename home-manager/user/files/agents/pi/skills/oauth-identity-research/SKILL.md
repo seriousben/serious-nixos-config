@@ -86,6 +86,7 @@ When deeper context is needed on a specific spec, read the corresponding file fr
 - **Actor Profile** (draft-00) — Classify actors in delegation chains using Entity Profile vocabulary → `refs/actor-profile.md`
 - **RFC 9493** (Subject Identifiers) — Eight standard formats for cross-system identity → `refs/subject-identifiers.md`
 - **ID-JAG** (WG draft-03) — Enterprise SSO for APIs via trusted IdP; one login, many SaaS tokens, AI agent tool access → `refs/id-jag.md`
+- **JAG-IR** (individual draft-00) — JWT grant interaction response: AS returns `interaction_required` + URI so the user can consent/step-up before a jwt-bearer/ID-JAG token is issued → `refs/jwt-grant-interaction-response.md`
 - **Identity Chaining** (WG draft-10, IETF Last Call) — Multi-hop authorization across domain boundaries; nearing RFC → `refs/identity-chaining.md`
 
 ### Logout
