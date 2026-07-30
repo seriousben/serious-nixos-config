@@ -5,4 +5,5 @@ apply:
 .PHONY: update
 update:
 	nix flake update
+	@./scripts/check-nixpkgs-release.sh
 

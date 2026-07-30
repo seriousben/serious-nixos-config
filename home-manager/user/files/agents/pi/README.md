@@ -37,19 +37,19 @@ Example usage (just tell the agent what you want):
 - "Use 2 workers in parallel: one adds tests for auth, one adds tests for billing"
 - "Chain: scout the payment module, then have a worker refactor it"
 
-## Skills
+## Skills and AGENTS.md
 
-| Skill | Trigger | What it does |
-|-------|---------|--------------|
-| `humanizer` | `/skill:humanizer` | Remove AI writing patterns from prose |
-| `code-simplifier` | `/skill:code-simplifier` or auto | Simplify recently modified code for clarity and maintainability |
-| `deslop` | `/skill:deslop` or auto | Remove AI code slop from diffs (comments, defensive code, `any` casts) |
-| `systematic-debugging` | `/skill:systematic-debugging` or auto | 4-phase root-cause-first debugging protocol |
-| `verify-completion` | `/skill:verify-completion` or auto | No completion claims without running verification |
-| `pi-harness-introspect` | `/skill:pi-harness-introspect` | Audit pi setup against session history and community repos |
-| `pi-customize` | auto | Guides adding skills and customization, global or per-repo |
+Skills and the global `AGENTS.md` are NO LONGER managed here. They live in
+[serious-agent-config](https://github.com/seriousben/serious-agent-config) (the
+single source of truth) and are symlinked into `~/.pi/agent/{skills,AGENTS.md}`
+by its `scripts/link <profile>`. This repo manages only the pi runtime:
+settings.json, extensions, and subagents.
 
-Skills marked "or auto" may be loaded automatically when the agent recognizes a matching task from the description.
+To (re)link after changing profile or config:
+
+```
+cd ~/src/seriousben/serious-agent-config && just link <profile>
+```
 
 ## File Layout
 
@@ -57,28 +57,25 @@ Skills marked "or auto" may be loaded automatically when the agent recognizes a 
 home-manager/user/files/agents/pi/
 ├── agents/              # .md files → ~/.pi/agent/agents/
 ├── extensions/          # .ts files → ~/.pi/agent/extensions/
-├── skills/              # SKILL.md dirs → ~/.pi/agent/skills/
 ├── settings.json        # → ~/.pi/agent/settings.json
-├── AGENTS.md            # → ~/.pi/agent/AGENTS.md
 └── README.md            # this file
 ```
-Humanizer skill comes from `trailofbits/skills-curated` flake input.
+
+Skills and AGENTS.md come from serious-agent-config via `scripts/link`
+(symlinks into `~/.pi/agent/skills` and `~/.pi/agent/AGENTS.md`).
 
 ## Sources
 
 - [seriousben/pi-extensions star list](https://github.com/stars/seriousben/lists/pi-extensions) — curated list of extension repos to watch
 
-Extensions and skills adapted from:
+Extensions adapted from:
 
 - [mitsuhiko/agent-stuff](https://github.com/mitsuhiko/agent-stuff) — review, answer, notify, context, todos, multi-edit, files, loop, session-breakdown
 - [badlogic/pi-mono](https://github.com/badlogic/pi-mono) — handoff, permission-gate, protected-paths (official examples)
 - [tmustier/pi-extensions](https://github.com/tmustier/pi-extensions) — raw-paste, tab-status, files-widget, skill-creator
 - [butttons/pi-kit](https://github.com/butttons/pi-kit) — verbosity-leash, explore-guard, safe-commit, auto-commit-nudge, session-recall, thinking-stash, plan-mode, dora
-- [trailofbits/skills-curated](https://github.com/trailofbits/skills-curated) — humanizer skill
-- [obra/superpowers](https://github.com/obra/superpowers) — systematic-debugging, verify-completion, test-driven-development, writing-plans, executing-plans, subagent-driven-development
-- [laulauland/dotfiles](https://github.com/laulauland/dotfiles) — deslop, commit, pr commands, librarian/simplifier agents, agent-browser skill
-- [HazAT/pi-config](https://github.com/HazAT/pi-config) — session-artifacts, cost tracking, watchdog, cmux, panel-agents, planner/reviewer/worker agents, code-simplifier skill
-- [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) — code-simplifier (upstream source)
-- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) — specialized review agents (code-simplicity, security, architecture, data-migration), git-history-analyzer
+- [HazAT/pi-config](https://github.com/HazAT/pi-config) — session-artifacts, cost tracking, watchdog, cmux, panel-agents, planner/reviewer/worker agents
 - [prateekmedia/pi-hooks](https://github.com/prateekmedia/pi-hooks) — checkpoint, lsp diagnostics, repeat
 - [ben-vargas/pi-packages](https://github.com/ben-vargas/pi-packages) — stack trace trimming, ancestor discovery, exa search, firecrawl
+
+Skill provenance is now recorded in serious-agent-config (per-skill `Source:` lines).

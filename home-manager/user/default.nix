@@ -179,6 +179,9 @@ in
 
       programs.zsh = {
         enable = true;
+        # Adopt the 26.05 default: keep zsh dotfiles under XDG config
+        # ($XDG_CONFIG_HOME/zsh) instead of $HOME.
+        dotDir = "${config.xdg.configHome}/zsh";
         initContent = ''
           if [[ $(ps -o command= -p "$PPID" | awk '{print $1}') != 'fish' ]]
           then
@@ -212,11 +215,18 @@ in
             stash-all = "stash save --include-untracked";
           };
           branch.autoSetupRebase = "always";
+          # Only auto-set upstream when the new branch name matches the remote
+          # branch (git 2.36+). Prevents `worktree add -b feat origin/main`
+          # from arming a bare `git push` to target main.
+          branch.autoSetupMerge = "simple";
           core.askPass = "";
           core.hooksPath = "${gitHooksDir}";
           credential.helper = "store";
           github.user = "seriousben";
-          push.default = "tracking";
+          # "simple" refuses a bare push when the upstream name differs from
+          # the local branch name; "tracking" pushed to whatever the upstream
+          # was, which once force-moved main from a worktree branch.
+          push.default = "simple";
           push.autoSetupRemote = true;
           init.defaultBranch = "main";
           status = {
@@ -234,6 +244,10 @@ in
         enable = true;
         defaultEditor = true;
         viAlias = true;
+        # Adopt the 26.05 defaults explicitly (no Ruby/Python3 providers) to
+        # drop them from the closure and silence the stateVersion < 26.05 warning.
+        withRuby = false;
+        withPython3 = false;
         extraConfig = "
           set clipboard=unnamedplus
           colorscheme dracula
@@ -289,15 +303,15 @@ in
     })
 
     # ── Agent configs ──────────────────────────────────────────────────
+    # pi runtime only (settings, extensions, subagents). AGENTS.md and skills
+    # are owned by serious-agent-config's `scripts/link` (source of truth),
+    # which symlinks them into ~/.pi/agent for the chosen profile.
     (lib.mkIf cfg.agents.enable {
-      home.file.".pi/agent/AGENTS.md".source =
-        mkFileSource ./files/agents/pi/AGENTS.md "home-manager/user/files/agents/pi/AGENTS.md";
       home.file.".pi/agent/settings.json".source =
         mkFileSource ./files/agents/pi/settings.json "home-manager/user/files/agents/pi/settings.json";
       home.file.".pi/agent/extensions".source =
         mkFileSource ./files/agents/pi/extensions "home-manager/user/files/agents/pi/extensions";
       home.file.".pi/agent/agents".source = ./files/agents/pi/agents;
-      home.file.".pi/agent/skills".source = ./files/agents/pi/skills;
     })
   ];
 }
