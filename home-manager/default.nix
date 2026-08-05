@@ -19,6 +19,11 @@ in
 {
   imports = [ ./user ];
 
+  # Skip the home-configuration.nix manpage: its options.json generator
+  # references the nixpkgs source without string context, which emits a build
+  # warning. Options are available via nixd and the online reference instead.
+  manual.manpages.enable = false;
+
   # macOS-specific: launchd agents
   launchd = {
     enable = true;
@@ -30,7 +35,12 @@ in
           ProgramArguments = [ "${gc-screenshots}" ];
           RunAtLoad = false;
           KeepAlive = false;
-          startInterval = 2678400; # 31 days
+          # Calendar-anchored, not startInterval: missed runs (sleep/reboot) fire
+          # on next wake instead of silently never firing.
+          StartCalendarInterval = {
+            Hour = 12;
+            Minute = 0;
+          };
           StandardErrorPath = "${config.home.homeDirectory}/gc_screenshot-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/gc_screenshot-stdout.log";
         };
@@ -42,7 +52,10 @@ in
           ProgramArguments = [ "${organize-downloads}" ];
           RunAtLoad = false;
           KeepAlive = false;
-          startInterval = 604800; # 7 days
+          StartCalendarInterval = {
+            Hour = 12;
+            Minute = 0;
+          };
           StandardErrorPath = "${config.home.homeDirectory}/organize_downloads-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/organize_downloads-stdout.log";
         };
