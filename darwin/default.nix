@@ -29,7 +29,7 @@ in
 
       # nix development
       nixd
-      nixfmt-rfc-style
+      nixfmt
 
       # development
       just
@@ -185,6 +185,7 @@ in
 
   imports = [
     ./system-defaults.nix
+    ./nix-maintenance.nix
   ];
 
   programs.zsh.enable = true;
