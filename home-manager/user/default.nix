@@ -196,9 +196,6 @@ in
           (builtins.readFile ./files/config/gitignore)
           "# direnv patterns"
           ".envrc.secrets"
-          "# Tensorlake specifics"
-          "indexify_local_runner_cache"
-          "indexify_storage"
         ];
 
         settings = {

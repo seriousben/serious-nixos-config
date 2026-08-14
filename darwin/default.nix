@@ -42,7 +42,6 @@ in
       # ngrok
 
       # kubernetes
-      kubernetes-helm
       helmfile
 
       # general utils
@@ -75,6 +74,9 @@ in
       postgresql
       k6
       terraform
+
+      # kubernetes: helm 4.x (stable lock still on 3.x)
+      kubernetes-helm
 
       # go
       go

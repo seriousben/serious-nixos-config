@@ -1,0 +1,12 @@
+# Nix build artifacts
+result
+result-*
+
+# direnv
+.direnv/
+
+# Secrets rendered from .envrc.secrets.tmpl via 1Password
+.envrc.secrets
+
+# Per-machine Claude settings
+.claude/settings.local.json
