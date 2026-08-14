@@ -33,12 +33,17 @@ in
 
       # development
       just
+      mage
       direnv
       _1password-cli
       awscli2
       google-cloud-sdk
       cmake
       # ngrok
+
+      # kubernetes
+      kubernetes-helm
+      helmfile
 
       # general utils
       ripgrep
