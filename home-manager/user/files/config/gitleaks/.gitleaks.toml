@@ -12,3 +12,8 @@
 # ]
 
 title = "global gitleaks config"
+
+# Load gitleaks' built-in ruleset. Without this, a supplied --config with no
+# rules scans with an empty ruleset and never flags anything.
+[extend]
+useDefault = true

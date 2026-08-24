@@ -15,6 +15,9 @@ let
   organize-downloads = pkgs.writeShellScript "organize-downloads" ''
     exec ${scriptsDir}/organize-downloads.sh --verbose
   '';
+  cleanup-agent-plans = pkgs.writeShellScript "cleanup-agent-plans" ''
+    exec ${scriptsDir}/cleanup-agent-plans.sh --verbose
+  '';
 in
 {
   imports = [ ./user ];
@@ -58,6 +61,21 @@ in
           };
           StandardErrorPath = "${config.home.homeDirectory}/organize_downloads-stderr.log";
           StandardOutPath = "${config.home.homeDirectory}/organize_downloads-stdout.log";
+        };
+      };
+      cleanup_agent_plans = {
+        enable = true;
+        config = {
+          Program = "${cleanup-agent-plans}";
+          ProgramArguments = [ "${cleanup-agent-plans}" ];
+          RunAtLoad = false;
+          KeepAlive = false;
+          StartCalendarInterval = {
+            Hour = 12;
+            Minute = 0;
+          };
+          StandardErrorPath = "${config.home.homeDirectory}/cleanup_agent_plans-stderr.log";
+          StandardOutPath = "${config.home.homeDirectory}/cleanup_agent_plans-stdout.log";
         };
       };
     };
