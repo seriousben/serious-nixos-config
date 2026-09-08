@@ -209,6 +209,41 @@ function update_repos
     rm -rf $tmpdir
 end
 
+function run_in_repos -d "Run a command in every sibling git repo in parallel"
+    if test (count $argv) -eq 0
+        echo "Usage: run_in_repos <command> [args...]"
+        return 1
+    end
+
+    set -l tmpdir (mktemp -d)
+    set -l dirs (find . -maxdepth 1 -type d -exec test -d '{}/.git' ';' -print | sort)
+    set -l cmd (string join ' ' -- (string escape -- $argv))
+
+    printf '%s\n' $dirs \
+        | xargs -P8 -I{} fish -c "
+            set -l name (basename {})
+            cd {}
+            eval $cmd > $tmpdir/\$name.out 2>&1
+            echo \$status > $tmpdir/\$name.status
+        "
+
+    for dir in $dirs
+        set -l name (basename "$dir")
+        if test -f "$tmpdir/$name.out"
+            set -l st (cat "$tmpdir/$name.status" 2>/dev/null)
+            if test "$st" -eq 0
+                echo "🟢 $name"
+            else
+                echo "🔴 $name (exit $st)"
+            end
+            cat "$tmpdir/$name.out"
+            echo ""
+        end
+    end
+
+    rm -rf $tmpdir
+end
+
 function op_apply
     op inject -i .envrc.secrets.tmpl -o .envrc.secrets
 end

@@ -152,6 +152,7 @@ in
 
       # LLM
       "claude"
+      "devin-desktop@next"
 
       # Work
       "granola"
