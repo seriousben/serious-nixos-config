@@ -41,9 +41,6 @@ in
       cmake
       # ngrok
 
-      # kubernetes
-      helmfile
-
       # general utils
       ripgrep
       jq
@@ -75,7 +72,9 @@ in
       k6
       terraform
 
-      # kubernetes: helm 4.x (stable lock still on 3.x)
+      # kubernetes
+      helmfile
+      # helm 4.x (stable lock still on 3.x)
       kubernetes-helm
 
       # go
